@@ -6,6 +6,10 @@ import slider2 from "../../assets/carousel/unnamed.webp"
 import slider3 from "../../assets/carousel/2065242_f316670d03ba9a69f30a31d579c25afa.jpg"
 import Product from "../../components/Product";
 import banner from "../../assets/logo/Deal-ngon-tgdd-1200x120-2.webp"
+import weekSlider1 from "../../assets/logo/TLTT-OPPO-Banners-9-380x200-1.webp"
+import weekSlider2 from "../../assets/logo/4-380x200-2.webp"
+import weekSlider3 from "../../assets/logo/2-380x200-3.webp"
+import weekSlider4 from "../../assets/logo/6-380x200-4.webp"
 
 const responsive = {
     superLargeDesktop: {
@@ -49,7 +53,7 @@ function Home() {
       </MultiCarousel>
 	  <div className="h-500px my-custom-bg-class m-4">
 			<img src={banner} alt="" className="w-full h-24"/>
-			<Carousel responsive={responsive} className="ml-4">
+			<Carousel responsive={responsive} className="ml-4" autoPlay={true}>
 				<Product />
 				<Product />
 				<Product />
@@ -58,6 +62,37 @@ function Home() {
 				<Product />
 				<Product />
 			</Carousel>
+	  </div>
+	  <div className="weekOfGold">
+			<p className="prd-promo__title">
+				TUẦN LỄ - GIẢM TỚI 1 TRIỆU
+			</p>
+			<Carousel responsive={responsive} className="ml-4 mr-4" autoPlay={true}>
+					<img src={weekSlider1} alt="" className="p-2 "/>
+					<img src={weekSlider2} alt="" className="p-2 rounded-md"/>
+					<img src={weekSlider3} alt="" className="p-2 rounded-md"/>
+					<img src={weekSlider4} alt="" className="p-2"/>
+					<img src={weekSlider4} alt="" className="p-2"/>
+					<img src={weekSlider4} alt="" className="p-2"/>
+					<img src={weekSlider2} alt="" className="p-2"/>
+					<img src={weekSlider3} alt="" className="p-2"/>
+					<img src={weekSlider4} alt="" className="p-2"/>
+			</Carousel>
+			<div className="grid grid-cols-5 ml-4">
+				<Product />
+				<Product />
+				<Product />
+				<Product />
+				<Product />
+				<Product />
+				<Product />
+				<Product />
+				<Product />
+				<Product />
+			</div>
+			<a href="#" className="seeall">
+				<span className="mb-3 relative bottom-1">Xem tất cả sản phẩm</span>
+			</a>
 	  </div>
     </>
   );

@@ -7,7 +7,8 @@ module.exports = withMT({
 		spacing: {
 			'200': '600px',
 			'125' : '1500px',
-			'500px' : '570px'
+			'500px' : '570px',
+			'800px' : '800px'
 		},
 
 	},
