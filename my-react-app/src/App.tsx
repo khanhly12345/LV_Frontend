@@ -8,7 +8,9 @@ import Checkout from "./layouts/Checkout";
 import Login from "./layouts/Login";
 import SignUp from "./layouts/SignUp";
 import FilterProduct from "./layouts/FilterProduct";
-
+import ProfileUser from "./layouts/ProfileUser";
+import ChangePassword from "./layouts/ChangePassword";
+import Purchase from "./layouts/Purchase";
 function App() {
   return (
     <>
@@ -21,6 +23,9 @@ function App() {
 		  <Route path="/login" element={<Login />} />
 		  <Route path="/signup" element={<SignUp />} />
 		  <Route path="/filter-product" element={<FilterProduct />} />
+		  <Route path="/user/profile" element={<ProfileUser />} />
+		  <Route path="/user/changepassword" element={<ChangePassword />} />
+		  <Route path="/user/purchase" element={<Purchase />} />
         </Route>
       </Routes>
     </>
