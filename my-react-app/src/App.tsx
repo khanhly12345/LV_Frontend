@@ -11,6 +11,9 @@ import FilterProduct from "./layouts/FilterProduct";
 import ProfileUser from "./layouts/ProfileUser";
 import ChangePassword from "./layouts/ChangePassword";
 import Purchase from "./layouts/Purchase";
+import LayoutAdmin from "./layoutAdmin/layout";
+import Overview from "./layoutAdmin/Overview";
+import Products from "./layoutAdmin/Products";
 function App() {
   return (
     <>
@@ -27,6 +30,10 @@ function App() {
 		  <Route path="/user/changepassword" element={<ChangePassword />} />
 		  <Route path="/user/purchase" element={<Purchase />} />
         </Route>
+		<Route path="/admin" element={<LayoutAdmin />}>
+			<Route path="" element={<Overview />} />
+			<Route path="products" element={<Products />} />
+		</Route>
       </Routes>
     </>
   );
