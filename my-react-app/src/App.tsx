@@ -14,6 +14,7 @@ import Purchase from "./layouts/Purchase";
 import LayoutAdmin from "./layoutAdmin/layout";
 import Overview from "./layoutAdmin/Overview";
 import Products from "./layoutAdmin/Products";
+import AddProduct from "./layoutAdmin/AddProduct";
 function App() {
   return (
     <>
@@ -33,6 +34,7 @@ function App() {
 		<Route path="/admin" element={<LayoutAdmin />}>
 			<Route path="" element={<Overview />} />
 			<Route path="products" element={<Products />} />
+			<Route path="addproduct" element={<AddProduct />} />
 		</Route>
       </Routes>
     </>
