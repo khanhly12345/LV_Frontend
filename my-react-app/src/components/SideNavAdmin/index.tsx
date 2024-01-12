@@ -22,7 +22,14 @@ function SideNavAdmin() {
       viewBox: "0 0 18 20",
       icon: "M17 5.923A1 1 0 0 0 16 5h-3V4a4 4 0 1 0-8 0v1H2a1 1 0 0 0-1 .923L.086 17.846A2 2 0 0 0 2.08 20h13.84a2 2 0 0 0 1.994-2.153L17 5.923ZM7 9a1 1 0 0 1-2 0V7h2v2Zm0-5a2 2 0 1 1 4 0v1H7V4Zm6 5a1 1 0 1 1-2 0V7h2v2Z",
     },
+	{
+		title: "Product Options",
+		path: "/admin/add-option-product",
+		viewBox: "0 0 448 512",
+		icon: "M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z",
+	  },
   ];
+
   const [pathName, setPathName] = useState<String>('')
   useEffect(() => {
 	const currentUrl = window.location.href;

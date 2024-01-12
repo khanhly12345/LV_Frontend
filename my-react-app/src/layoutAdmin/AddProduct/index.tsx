@@ -6,12 +6,10 @@ import { useAppDispatch } from "../../redux/store";
 
 function AddProduct() {
   const [productName, setProductName] = useState<string>("");
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [brand, setBrand] = useState<string>("");
-  const [color, setColor] = useState<string>("");
-  const [ram, setRam] = useState<string>("");
-  const [quantity, setQuantity] = useState<number>(1);
+  const [category, setCategory] = useState<string>("smartphone");
   const [img, setImg] = useState<File | null>(null);
   const [thumNail1, setThumNail1] = useState<File>();
   const [thumNail2, setThumNail2] = useState<File>();
@@ -27,9 +25,7 @@ function AddProduct() {
     formData.append("price", price.toString());
     formData.append("description", description);
     formData.append("brand", brand);
-	formData.append("color", color);
-	formData.append("ram", ram);
-	formData.append("quantity", quantity.toString());
+	formData.append("category", category);
     if (img) formData.append("image", img);
     if (thumNail1) formData.append("image", thumNail1);
     if (thumNail2) formData.append("image", thumNail2);
@@ -53,10 +49,25 @@ function AddProduct() {
                   <h2 className="text-xl font-bold dark:text-gray-400 tracking-widest pb-4">
                     ADD PRODUCT
                   </h2>
-                  <Button placeholder="" size="sm" color="blue">
-                    Add Product
-                  </Button>
+
+                  <label
+                    htmlFor="countries_disabled"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Select an category
+                  </label>
+                  <select
+				  	onChange={e => setCategory(e.target.value)}
+                    id="countries_disabled"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option value="smartphone">Smart Phone</option>
+                    <option value="laptop">Laptop</option>
+                    <option value="tablet">Tablet</option>
+                  </select>
                 </div>
+				{/* <img src="http://drive.google.com/file/d/12gQwXLzPIIqubcqXHSFJdfgZtr7iH-cq/view?usp=sharing" width="100" height="200" alt="Image" />
+				<img src="https://drive.google.com/thumbnail?id=12gQwXLzPIIqubcqXHSFJdfgZtr7iH-cq"/> */}
                 <div className="pt-2 relative text-gray-600">
                   <input
                     className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
@@ -114,7 +125,7 @@ function AddProduct() {
                           type="text"
                           placeholder="Price"
                           value={price}
-                          onChange={(e) => setPrice(parseFloat(e.target.value))}
+                          onChange={(e) => setPrice(e.target.value)}
                           required
                         />
                       </div>
@@ -150,54 +161,7 @@ function AddProduct() {
                           required
                         />
                       </div>
-					  <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Color
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Color"
-                          value={color}
-                          onChange={(e) => setColor(e.target.value)}
-                          required
-                        />
-                      </div>
-					  <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Ram
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Ram"
-                          value={ram}
-                          onChange={(e) => setRam(e.target.value)}
-                          required
-                        />
-                      </div>
-					  <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Quantity
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Quantity"
-                          value={quantity.toString()}
-                          onChange={(e) => setQuantity(parseFloat(e.target.value))}
-                          required
-                        />
-                      </div>
+
                     </div>
                     <div className="mb-4 p-4">
                       {/* <div className="flex">

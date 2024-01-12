@@ -1,11 +1,13 @@
 
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 import productsSlice from "./slice/ProductsSlice";
+import OptionsProductSlice from "./slice/OptionsProductSlice";
 import { useDispatch } from "react-redux";
 
 
 export const store = configureStore({
 	reducer: {
+		productOptions: OptionsProductSlice,
 		products: productsSlice
 	}
 })
