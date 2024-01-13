@@ -16,7 +16,7 @@ export const addProductOptions = createAsyncThunk(
 	async (payload: any, { rejectWithValue }) => {
 		console.log(payload)
 		try {
-			const response = await axiosAdmin.post("products/options", payload)
+			const response = await axiosAdmin.post("products/options/create", payload)
 			return response
 		}catch(error: any) {
 			throw rejectWithValue(error.message)

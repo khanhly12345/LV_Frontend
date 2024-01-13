@@ -16,6 +16,7 @@ import Overview from "./layoutAdmin/Overview";
 import Products from "./layoutAdmin/Products";
 import AddProduct from "./layoutAdmin/AddProduct";
 import OptionsProduct from "./layoutAdmin/OptionsProduct";
+import EditProduct from "./layoutAdmin/EditProduct";
 function App() {
   return (
     <>
@@ -37,6 +38,7 @@ function App() {
 			<Route path="products" element={<Products />} />
 			<Route path="addproduct" element={<AddProduct />} />
 			<Route path="add-option-product" element={<OptionsProduct />} />
+			<Route path="edit-product/:id" element={<EditProduct />} />
 		</Route>
       </Routes>
     </>

@@ -1,31 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SideNavAdmin from "../../components/SideNavAdmin";
 import { useAppDispatch } from "../../redux/store";
 import { addProductOptions } from "../../redux/slice/OptionsProductSlice";
+import { getAllProduct } from "../../redux/slice/ProductsSlice";
+import { useSelector } from "react-redux";
 
 function OptionsProduct() {
-	const [color, setColor] = useState<string>("");
-	const [ram, setRam] = useState<string>("");
-	const [quantity, setQuantity] = useState<string>("");
+  const [color, setColor] = useState<string>("");
+  const [ram, setRam] = useState<string>("");
+  const [quantity, setQuantity] = useState<string>("");
+  const [productId, setProductId] = useState<string>("");
 
-	const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
+  const products = useSelector((state: any) => state.products.data);
 
-	const handleSubmit = (event: any) => {
-		event.preventDefault();
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
 
-		const formData = new FormData();
+    dispatch(addProductOptions({color, ram, quantity, productId}));
+  };
 
-		formData.append("color", color);
-		formData.append("ram", ram);
-		formData.append("quantity", quantity.toString());
+  useEffect(() => {
+    dispatch(getAllProduct());
+  }, [dispatch]);
 
-		dispatch(addProductOptions(formData))
-	}
-
-	return(
-		<>
-			<SideNavAdmin />
-			<div className="p-4 sm:ml-60">
+  return (
+    <>
+      <SideNavAdmin />
+      <div className="p-4 sm:ml-60">
         {/* <div className="p-4 border-2 border-gray-200  rounded-lg dark:border-gray-700 mt-14 ">
 				<h1 className="text-3xl space-y-4 tracking-widest text-blue-500">PRODUCT</h1> */}
         <section className="lg:flex lg:h-screen font-poppins dark:bg-gray-800 pt-10">
@@ -44,12 +46,15 @@ function OptionsProduct() {
                     Select an product
                   </label>
                   <select
+                    required
+                    onChange={(e) => setProductId(e.target.value)}
                     id="countries_disabled"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
-                    <option value="smartphone">Smart Phone</option>
-                    <option value="laptop">Laptop</option>
-                    <option value="tablet">Tablet</option>
+                    <option value="">Select an product</option>
+                    {products?.data?.map((product: any) => (
+                      <option value={product._id}>{product.productName}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -82,7 +87,6 @@ function OptionsProduct() {
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="grid grid-cols-2">
                     <div className="mb-4 p-4">
-
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2"
@@ -127,14 +131,11 @@ function OptionsProduct() {
                           type="text"
                           placeholder="Quantity"
                           value={quantity.toString()}
-                          onChange={(e) =>
-                            setQuantity(e.target.value)
-                          }
+                          onChange={(e) => setQuantity(e.target.value)}
                           required
                         />
                       </div>
                     </div>
-
                   </div>
                   <button className="bg-blue-600 ml-4 text-white font-bold py-2 px-4 rounded hover:opacity-50">
                     Submit
@@ -146,8 +147,8 @@ function OptionsProduct() {
         </section>
         {/* </div> */}
       </div>
-		</>
-	)
+    </>
+  );
 }
 
 export default OptionsProduct;
