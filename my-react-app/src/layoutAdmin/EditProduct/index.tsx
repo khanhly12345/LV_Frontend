@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { useAppDispatch } from "../../redux/store";
 import { editProduct, getProductById } from "../../redux/slice/ProductsSlice";
 import { useSelector } from "react-redux";
+import Loading from "../../components/Loading";
+import { useNavigate } from "react-router-dom";
 
 function EditProduct() {
   const [productName, setProductName] = useState<string>("");
@@ -12,12 +14,14 @@ function EditProduct() {
   const [brand, setBrand] = useState<string>("");
 
   const products = useSelector((state: any) => state.products.data);
+  const status = useSelector((state: any) => state.products.status);
   const { id } = useParams();
   const dispacth = useAppDispatch();
+  const navigate = useNavigate()
 
-  console.log(products.data)
+  console.log(status)
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
 	const payload = {
@@ -30,21 +34,23 @@ function EditProduct() {
 		}
 	}
 
-	dispacth(editProduct(payload))
+	await dispacth(editProduct(payload))
+	navigate("/admin/products")
   };
 
   useEffect(() => {
-    if (products.data) {
-      setProductName(products.data.productName);
-      setBrand(products.data.brand);
-	  setDescription(products.data.description);
-	  setPrice(products.data.price)
+    if (products) {
+      setProductName(products.productName);
+      setBrand(products.brand);
+	  setDescription(products.description);
+	  setPrice(products.price)
     }
-  }, [products.data]);
+  }, [products]);
 
   useEffect(() => {
     dispacth(getProductById(id));
   }, [dispacth]);
+
 
   return (
     <>
@@ -62,79 +68,82 @@ function EditProduct() {
                   </h2>
                 </div>
               </div>
-              <div className="p-4 overflow-x-auto">
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
-                  <div className="grid grid-cols-2">
-                    <div className="mb-4 p-4">
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Product Name
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          value={productName}
-                          onChange={(e) => setProductName(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Price
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          value={price}
-                          onChange={(e) => setPrice(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Discription
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Quantity"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Brand
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Quantity"
-                          value={brand}
-                          onChange={(e) => setBrand(e.target.value)}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <button className="bg-blue-600 ml-4 text-white font-bold py-2 px-4 rounded hover:opacity-50">
-                    Submit
-                  </button>
-                </form>
-              </div>
+			  {
+				status === "loading" ? <Loading /> :
+				<div className="p-4 overflow-x-auto">
+					<form onSubmit={handleSubmit} encType="multipart/form-data">
+					<div className="grid grid-cols-2">
+						<div className="mb-4 p-4">
+						<div className="mb-4">
+							<label
+							className="block text-gray-700 text-sm font-bold mb-2"
+							htmlFor="username"
+							>
+							Product Name
+							</label>
+							<input
+							className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							value={productName}
+							onChange={(e) => setProductName(e.target.value)}
+							required
+							/>
+						</div>
+						<div className="mb-4">
+							<label
+							className="block text-gray-700 text-sm font-bold mb-2"
+							htmlFor="username"
+							>
+							Price
+							</label>
+							<input
+							className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							value={price}
+							onChange={(e) => setPrice(e.target.value)}
+							required
+							/>
+						</div>
+						<div className="mb-4">
+							<label
+							className="block text-gray-700 text-sm font-bold mb-2"
+							htmlFor="username"
+							>
+							Discription
+							</label>
+							<input
+							className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							placeholder="Quantity"
+							value={description}
+							onChange={(e) => setDescription(e.target.value)}
+							required
+							/>
+						</div>
+						<div className="mb-4">
+							<label
+							className="block text-gray-700 text-sm font-bold mb-2"
+							htmlFor="username"
+							>
+							Brand
+							</label>
+							<input
+							className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							placeholder="Quantity"
+							value={brand}
+							onChange={(e) => setBrand(e.target.value)}
+							required
+							/>
+						</div>
+						</div>
+					</div>
+					<button className="bg-blue-600 ml-4 text-white font-bold py-2 px-4 rounded hover:opacity-50">
+						Submit
+					</button>
+					</form>
+				</div>
+			  }
             </div>
           </div>
         </section>

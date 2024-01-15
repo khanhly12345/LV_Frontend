@@ -149,3 +149,20 @@ body {
   .tbody tr {
 	height: 50px;
   }
+
+  .loading-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.arrow {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+}

@@ -3,12 +3,12 @@ import axiosAdmin from "../../api/axios"
 
 interface ProductOptionsState {
 	data: any[]; // Replace 'any' with the actual type of your data
-	status: boolean;
+	status: string;
   }
 
 const initialState: ProductOptionsState = {
 	data: [],
-	status: true
+	status: "loading" || "success",
 }
 
 export const addProductOptions = createAsyncThunk(

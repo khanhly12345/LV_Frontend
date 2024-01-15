@@ -6,12 +6,16 @@ import { useEffect, useState } from "react";
 import { deleteProduct, getAllProduct } from "../../redux/slice/ProductsSlice";
 import { Link } from "react-router-dom";
 import ModalDelete from "../../components/ModalDelete";
+import Loading from "../../components/Loading";
 
 function Products() {
   const [open, setOpen] = useState<boolean>(false);
   const [id, setId] = useState<string>("");
   const dispatch = useAppDispatch();
   const products = useSelector((state: any) => state?.products?.data);
+  const status = useSelector((state: any) => state?.products?.status);
+
+  console.log(status);
 
   useEffect(() => {
     dispatch(getAllProduct());
@@ -36,9 +40,13 @@ function Products() {
                   <h2 className="text-xl font-bold dark:text-gray-400 tracking-widest pb-4">
                     PRODUCT
                   </h2>
-                  <Button placeholder="" size="sm" color="blue">
-                    <Link to={"/admin/addproduct"}>Add Product</Link>
-                  </Button>
+
+                  <Link
+                    to={"/admin/addproduct"}
+                    className="bg-blue-500 text-white px-4 py-2 font-medium border border-blue-500 rounded-md dark:text-blue-300 dark:border-blue-300 "
+                  >
+                    Add Product
+                  </Link>
                 </div>
                 <div className="pt-2 relative text-gray-600">
                   <input
@@ -77,8 +85,12 @@ function Products() {
                       <th className="px-6 pb-3 font-medium">Action </th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {Array.isArray(products) && products!.map((product: any) => (
+                  {status === "loading" ? (
+                    <Loading />
+                  ) : (
+                    <tbody>
+                      {Array.isArray(products) &&
+                        products!.map((product: any) => (
                           <>
                             <tr className="text-xs bg-gray-100 dark:text-gray-400 dark:bg-gray-800">
                               <td className="px-6 py-5 font-medium">
@@ -121,63 +133,9 @@ function Products() {
                               </td>
                             </tr>
                           </>
-                        ))
-					}
-                    {/* <tr className="text-xs dark:text-gray-400">
-                      <td className="px-6 py-5 font-medium">018276td45</td>
-                      <td className="px-6 py-5 font-medium ">08.4.2021</td>
-                      <td className="px-6 py-5 font-medium ">abc@gmail.com</td>
-                      <td>
-                        <span className="inline-block px-2 py-1 text-center text-yellow-600 bg-yellow-100 rounded-full dark:text-yellow-700 dark:bg-yellow-200">
-                          Pending
-                        </span>
-                      </td>
-                      <td className="px-6 py-5">
-                        <a
-                          href="goole.com"
-                          className="px-4 py-2 font-medium text-blue-500 border border-blue-500 rounded-md dark:text-blue-300 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-gray-700 hover:text-gray-100 hover:bg-blue-500"
-                        >
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="text-xs bg-gray-100 dark:bg-gray-800 dark:text-gray-400">
-                      <td className="px-6 py-5 font-medium">018276td45</td>
-                      <td className="px-6 py-5 font-medium ">08.4.2021</td>
-                      <td className="px-6 py-5 font-medium ">abc@gmail.com</td>
-                      <td>
-                        <span className="inline-block px-2 py-1 text-center text-green-600 bg-green-100 rounded-full dark:text-green-700 dark:bg-green-200">
-                          Completed
-                        </span>
-                      </td>
-                      <td className="px-6 py-5 ">
-                        <a
-                          href="goole.com"
-                          className="px-4 py-2 font-medium text-blue-500 border border-blue-500 rounded-md dark:text-blue-300 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-gray-700 hover:text-gray-100 hover:bg-blue-500"
-                        >
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="text-xs dark:text-gray-400">
-                      <td className="px-6 py-5 font-medium">018276td45</td>
-                      <td className="px-6 py-5 font-medium ">08.4.2021</td>
-                      <td className="px-6 py-5 font-medium ">abc@gmail.com</td>
-                      <td>
-                        <span className="inline-block px-2 py-1 text-center text-red-600 bg-red-100 rounded-full dark:text-red-700 dark:bg-red-200">
-                          Cancelled
-                        </span>
-                      </td>
-                      <td className="px-6 py-5 ">
-                        <a
-                          href="goole.com"
-                          className="px-4 py-2 font-medium text-blue-500 border border-blue-500 rounded-md dark:text-blue-300 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-gray-700 hover:text-gray-100 hover:bg-blue-500"
-                        >
-                          Edit
-                        </a>
-                      </td>
-                    </tr> */}
-                  </tbody>
+                        ))}
+                    </tbody>
+                  )}
                 </table>
               </div>
             </div>

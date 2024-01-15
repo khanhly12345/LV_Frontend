@@ -1,14 +1,14 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axiosAdmin from "../../api/axios"
 
 interface ProductsState {
 	data: any[]; // Replace 'any' with the actual type of your data
-	status: boolean;
+	status: string;
   }
 
 const initialState: ProductsState = {
 	data: [],
-	status: true
+	status: "idle",
 }
 
 export const addProduct = createAsyncThunk(
@@ -84,20 +84,43 @@ const productsSlice = createSlice({
 
 	},
 	extraReducers(builder) {
+		builder.addCase(addProduct.pending, (state: any) => {
+			state.status = "loading"
+		})
 		builder.addCase(addProduct.fulfilled, (state: any, action) => {
+			state.status = "successed"
 			state.data = action.payload
 		})
+		builder.addCase(editProduct.pending, (state: any) => {
+			state.status = "loading"
+		})
+		builder.addCase(editProduct.fulfilled, (state: any, action) => {
+			state.status = "successed"
+			state.data = action.payload
+		})
+		builder.addCase(getAllProduct.pending, (state: any) => {
+			state.status = "loading"
+		})
 		.addCase(getAllProduct.fulfilled,  (state: any, action) => {
+			state.status = "successed"
+			state.data = action.payload
+			// state.status = "init"
+		})
+		builder.addCase(getProductById.pending, (state: any) => {
+			state.status = "loading"
+		})
+		.addCase(getProductById.fulfilled,  (state: any, action) => {
+			state.status = "successed"
 			state.data = action.payload
 
 		})
-		.addCase(getProductById.fulfilled,  (state: any, action) => {
-			state.data = action.payload
+		.addCase(deleteProduct.pending,  (state: ProductsState) => {
+			state.status = "loading"
 		})
 		.addCase(deleteProduct.fulfilled,  (state: ProductsState, action) => {
-			console.log(state)
-			console.log(action.payload)
+			state.status = "successed"
 			state.data = state.data.filter((product: any) => product._id !== action.payload)
+			// state.status = "init"
 		})
 	}
 })

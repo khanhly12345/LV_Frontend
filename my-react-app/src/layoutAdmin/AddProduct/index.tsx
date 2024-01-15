@@ -1,8 +1,11 @@
 import { Button } from "@material-tailwind/react";
 import SideNavAdmin from "../../components/SideNavAdmin";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addProduct } from "../../redux/slice/ProductsSlice";
 import { useAppDispatch } from "../../redux/store";
+import { useSelector } from "react-redux";
+import Loading from "../../components/Loading";
+import { useNavigate } from "react-router-dom";
 
 function AddProduct() {
   const [productName, setProductName] = useState<string>("");
@@ -17,23 +20,32 @@ function AddProduct() {
   const [thumNail4, setThumNail4] = useState<File>();
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const status = useSelector((state: any) => state?.products?.status);
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     const formData = new FormData();
     formData.append("productName", productName);
     formData.append("price", price.toString());
     formData.append("description", description);
     formData.append("brand", brand);
-	formData.append("category", category);
+    formData.append("category", category);
     if (img) formData.append("image", img);
     if (thumNail1) formData.append("image", thumNail1);
     if (thumNail2) formData.append("image", thumNail2);
     if (thumNail3) formData.append("image", thumNail3);
     if (thumNail4) formData.append("image", thumNail4);
 
-    dispatch(addProduct(formData));
+    await dispatch(addProduct(formData));
+	navigate("/admin/products");
   };
+
+	//   useEffect(() => {
+	//     if (status === "successed") {
+	//       navigate("/admin/products");
+	//     }
+	//   }, [status]);
 
   return (
     <>
@@ -57,7 +69,7 @@ function AddProduct() {
                     Select an category
                   </label>
                   <select
-				  	onChange={e => setCategory(e.target.value)}
+                    onChange={(e) => setCategory(e.target.value)}
                     id="countries_disabled"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
@@ -66,7 +78,7 @@ function AddProduct() {
                     <option value="tablet">Tablet</option>
                   </select>
                 </div>
-				{/* <img src="http://drive.google.com/file/d/12gQwXLzPIIqubcqXHSFJdfgZtr7iH-cq/view?usp=sharing" width="100" height="200" alt="Image" />
+                {/* <img src="http://drive.google.com/file/d/12gQwXLzPIIqubcqXHSFJdfgZtr7iH-cq/view?usp=sharing" width="100" height="200" alt="Image" />
 				<img src="https://drive.google.com/thumbnail?id=12gQwXLzPIIqubcqXHSFJdfgZtr7iH-cq"/> */}
                 <div className="pt-2 relative text-gray-600">
                   <input
@@ -93,78 +105,80 @@ function AddProduct() {
                   </button>
                 </div>
               </div>
-              <div className="p-4 overflow-x-auto">
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
-                  <div className="grid grid-cols-2">
-                    <div className="mb-4 p-4">
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Product Name
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Product Name"
-                          value={productName}
-                          onChange={(e) => setProductName(e.target.value)}
-                          required
-                        />
+              {status === "loading" ? (
+                <Loading />
+              ) : (
+                <div className="p-4 overflow-x-auto">
+                  <form onSubmit={handleSubmit} encType="multipart/form-data">
+                    <div className="grid grid-cols-2">
+                      <div className="mb-4 p-4">
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Product Name
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="text"
+                            placeholder="Product Name"
+                            value={productName}
+                            onChange={(e) => setProductName(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Price
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="text"
+                            placeholder="Price"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Discription
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="text"
+                            placeholder="Discription"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Brand
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="text"
+                            placeholder="Brand"
+                            value={brand}
+                            onChange={(e) => setBrand(e.target.value)}
+                            required
+                          />
+                        </div>
                       </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Price
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Price"
-                          value={price}
-                          onChange={(e) => setPrice(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Discription
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Discription"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Brand
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="text"
-                          placeholder="Brand"
-                          value={brand}
-                          onChange={(e) => setBrand(e.target.value)}
-                          required
-                        />
-                      </div>
-
-                    </div>
-                    <div className="mb-4 p-4">
-                      {/* <div className="flex">
+                      <div className="mb-4 p-4">
+                        {/* <div className="flex">
 							{Array.from(img).map((item) => {
 							return (
 								<span>
@@ -180,111 +194,112 @@ function AddProduct() {
 							);
 							})}
 						</div> */}
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Image
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="file"
-                          name="image"
-                          onChange={(event) => {
-                            if (!event.target.files) return;
-                            setImg(event.target.files[0]);
-                          }}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Thumnail 1
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="file"
-                          placeholder="Product Name"
-                          name="image"
-                          onChange={(e) => {
-                            if (e.target.files && e.target.files.length > 0) {
-                              setThumNail1(e.target.files[0]);
-                            }
-                          }}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Thumnail 2
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="file"
-                          placeholder="Product Name"
-                          name="image"
-                          onChange={(e) => {
-                            if (e.target.files && e.target.files.length > 0) {
-                              setThumNail2(e.target.files[0]);
-                            }
-                          }}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Thumnail 3
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="file"
-                          placeholder="Product Name"
-                          name="image"
-                          onChange={(e) => {
-                            if (e.target.files && e.target.files.length > 0) {
-                              setThumNail3(e.target.files[0]);
-                            }
-                          }}
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2"
-                          htmlFor="username"
-                        >
-                          Thumnail 4
-                        </label>
-                        <input
-                          className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          type="file"
-                          placeholder="Product Name"
-                          name="image"
-                          onChange={(e) => {
-                            if (e.target.files && e.target.files.length > 0) {
-                              setThumNail4(e.target.files[0]);
-                            }
-                          }}
-                          required
-                        />
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Image
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="file"
+                            name="image"
+                            onChange={(event) => {
+                              if (!event.target.files) return;
+                              setImg(event.target.files[0]);
+                            }}
+                            required
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Thumnail 1
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="file"
+                            placeholder="Product Name"
+                            name="image"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files.length > 0) {
+                                setThumNail1(e.target.files[0]);
+                              }
+                            }}
+                            required
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Thumnail 2
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="file"
+                            placeholder="Product Name"
+                            name="image"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files.length > 0) {
+                                setThumNail2(e.target.files[0]);
+                              }
+                            }}
+                            required
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Thumnail 3
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="file"
+                            placeholder="Product Name"
+                            name="image"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files.length > 0) {
+                                setThumNail3(e.target.files[0]);
+                              }
+                            }}
+                            required
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Thumnail 4
+                          </label>
+                          <input
+                            className="rounded-md appearance-none  w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            type="file"
+                            placeholder="Product Name"
+                            name="image"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files.length > 0) {
+                                setThumNail4(e.target.files[0]);
+                              }
+                            }}
+                            required
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <button className="bg-blue-600 ml-4 text-white font-bold py-2 px-4 rounded hover:opacity-50">
-                    Submit
-                  </button>
-                </form>
-              </div>
+                    <button className="bg-blue-600 ml-4 text-white font-bold py-2 px-4 rounded hover:opacity-50">
+                      Submit
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
           </div>
         </section>

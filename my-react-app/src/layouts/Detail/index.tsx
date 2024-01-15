@@ -1,7 +1,11 @@
 import { Rating } from "@material-tailwind/react";
 import avatar from "../../assets/product/iphone-14-pro-max-256gb-(52).webp"
+import { useEffect } from "react";
 
 function Detail() {
+	useEffect(() => {
+		window.scroll(0, 0)
+	}, [])
   return (
     <>
       <div className="flex justify-center pt-4">
