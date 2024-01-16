@@ -13,3 +13,9 @@ export const HandlePrice = (value: any) => {
     value = VND.format(value)
     return value
 }
+
+export const getCart = () => {
+	const cartString = localStorage.getItem('cart');
+	const cart = cartString ? JSON.parse(cartString) : []
+	return cart
+}

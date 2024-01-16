@@ -1,75 +1,99 @@
 import { Rating } from "@material-tailwind/react";
-import avatar from "../../assets/product/iphone-14-pro-max-256gb-(52).webp"
-import { useEffect } from "react";
+import avatar from "../../assets/product/iphone-14-pro-max-256gb-(52).webp";
+import { useEffect, useState } from "react";
+import { useAppDispatch } from "../../redux/store";
+import { getProductById } from "../../redux/slice/ProductsSlice";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { HandlePrice, getCart } from "../../utils/constant";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import { getProductOptionsById } from "../../redux/slice/OptionsProductSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { stringify } from "querystring";
+
+interface option {
+  _id: string;
+  color: string;
+  ram: string;
+  productId: string;
+  quantity: number;
+}
 
 function Detail() {
-	useEffect(() => {
-		window.scroll(0, 0)
-	}, [])
+  const { id } = useParams();
+  const dispatch = useAppDispatch();
+  const product = useSelector((state: any) => state?.products?.data);
+  const productOptions = useSelector(
+    (state: any) => state?.productOptions?.dataOptions
+  );
+
+  const [filedId, setFiledId] = useState({ thumnails: "", index: -1 });
+  const [colorId, setColorId] = useState({ id: "", index: -1 });
+  const [ramId, setRamId] = useState({ id: "", index: -1 });
+  const [idOption, setIdOption] = useState("");
+  const cartId = getCart();
+
+  useEffect(() => {
+    window.scroll(0, 0);
+    dispatch(getProductById(id));
+    dispatch(getProductOptionsById(id));
+  }, []);
+
+  const handleAddCart = () => {
+    if (idOption && !cartId.includes(idOption)) {
+      localStorage.setItem("cart", JSON.stringify([...cartId, idOption]));
+      toast.success("Success Notification !", {
+        autoClose: 1000,
+      });
+    }
+  };
+
   return (
     <>
-      <div className="flex justify-center pt-4">
+      <Breadcrumbs value="Product Detail" />
+      <div className="flex justify-center">
         <section className="overflow-hidden bg-white py-11 font-poppins dark:bg-gray-800 w-10/12 rounded-lg">
-          <div className="max-w-6xl px-4 py-4 mx-auto lg:py-8 md:px-6">
+          <div className="max-w-6xl px-4 mx-auto md:px-6">
             <div className="flex flex-wrap -mx-4">
               <div className="w-full mb-8 md:w-1/2 md:mb-0">
                 <div className="sticky top-0 z-50 overflow-hidden ">
-                  <div className="relative mb-6 lg:mb-10 lg:h-2/4 ">
-                    <img
-                      src="https://i.postimg.cc/6qcPhTQg/R-18.png"
-                      alt=""
-                      className="object-cover w-full lg:h-full "
-                    />
+                  <div className="mb-6 lg:mb-10 lg:h-2/4 flex justify-center">
+                    {product && product.image && product.image[0] && (
+                      <img
+                        src={`https://drive.google.com/thumbnail?id=${
+                          filedId.thumnails
+                            ? filedId.thumnails
+                            : product.image[0]
+                        }&sz=w600-h400`}
+                        alt="drive image"
+                        // className="w-full h-80"
+                      />
+                    )}
                   </div>
                   <div className="flex-wrap hidden md:flex ">
-                    <div className="w-1/2 p-2 sm:w-1/4">
-                      <a
-                        href="google.com"
-                        className="block border border-purple-600 hover:border-fuchsia-300"
-                      >
-                        <img
-                          src="https://i.postimg.cc/6qcPhTQg/R-18.png"
-                          alt=""
-                          className="object-cover w-full lg:h-20"
-                        />
-                      </a>
-                    </div>
-                    <div className="w-1/2 p-2 sm:w-1/4">
-                      <a
-                        href="google.com"
-                        className="block border border-transparent hover:border-fuchsia-300"
-                      >
-                        <img
-                          src="https://i.postimg.cc/6qcPhTQg/R-18.png"
-                          alt=""
-                          className="object-cover w-full lg:h-20"
-                        />
-                      </a>
-                    </div>
-                    <div className="w-1/2 p-2 sm:w-1/4">
-                      <a
-                        href="google.com"
-                        className="block border border-transparent hover:border-fuchsia-300"
-                      >
-                        <img
-                          src="https://i.postimg.cc/6qcPhTQg/R-18.png"
-                          alt=""
-                          className="object-cover w-full lg:h-20"
-                        />
-                      </a>
-                    </div>
-                    <div className="w-1/2 p-2 sm:w-1/4">
-                      <a
-                        href="google.com"
-                        className="block border border-transparent hover:border-fuchsia-300"
-                      >
-                        <img
-                          src="https://i.postimg.cc/6qcPhTQg/R-18.png"
-                          alt=""
-                          className="object-cover w-full lg:h-20"
-                        />
-                      </a>
-                    </div>
+                    {product?.image
+                      ?.slice(-4)
+                      .map((thumnails: string, index: number) => (
+                        <div
+                          className="w-1/2 p-2 sm:w-1/4"
+                          onClick={() => setFiledId({ thumnails, index })}
+                        >
+                          <a
+                            className={`block ${
+                              filedId.index === index
+                                ? "border border-purple-600"
+                                : ""
+                            } b hover:border-fuchsia-300`}
+                          >
+                            <img
+                              src={`https://drive.google.com/thumbnail?id=${thumnails}&sz=w600-h400`}
+                              alt=""
+                              className="object-cover w-full lg:h-20"
+                            />
+                          </a>
+                        </div>
+                      ))}
                   </div>
                   <div className="px-6 pb-6 mt-6 border-t border-gray-300 dark:border-gray-400 ">
                     <div className="flex flex-wrap items-center mt-6">
@@ -104,18 +128,18 @@ function Detail() {
                 <div className="lg:pl-20">
                   <div className="mb-8 ">
                     <h2 className="max-w-xl mb-6 text-2xl font-bold dark:text-gray-400 md:text-4xl">
-                      Macbook Pro M130c90
+                      {product?.productName}
                     </h2>
                     <p className="inline-block mb-6 text-4xl font-bold text-gray-700 dark:text-gray-400 ">
-                      <span>$1500.99</span>
+                      <span>{HandlePrice(product?.price)}</span>
                       <span className="text-base font-normal text-gray-500 line-through dark:text-gray-400">
-                        $1800.99
+                        {HandlePrice(
+                          product?.price + (product?.price * 12) / 100
+                        )}
                       </span>
                     </p>
                     <p className="max-w-md text-gray-700 dark:text-gray-400">
-                      Lorem ispum dor amet Lorem ispum dor amet Lorem ispum dor
-                      amet Lorem ispum dor amet Lorem ispum dor amet Lorem ispum
-                      dor amet Lorem ispum dor amet Lorem ispum dor amet
+                      {product?.description}
                     </p>
                   </div>
                   <div className="mb-8">
@@ -123,15 +147,25 @@ function Detail() {
                       Colors
                     </h2>
                     <div className="flex flex-wrap -mx-2 -mb-2">
-                      <button className="p-1 mb-2 mr-3 border border-purple-600 rounded-full">
-                        <div className="w-6 h-6 rounded-full bg-blue-gray-100"></div>
-                      </button>
-                      <button className="p-1 mb-2 mr-3 ">
-                        <div className="w-6 h-6 bg-gray-700 rounded-full"></div>
-                      </button>
-                      <button className="p-1 mb-2 ">
-                        <div className="w-6 h-6 bg-deep-orange-500 rounded-full"></div>
-                      </button>
+                      {productOptions?.map(
+                        (productOption: option, index: number) => (
+                          <button
+                            className={`px-4 py-2 mb-2 mr-4 font-semibold border ${
+                              productOption._id === ramId.id ||
+                              index === colorId.index
+                                ? "border-purple-600"
+                                : ""
+                            } rounded-md hover:border-fuchsia-400 hover:text-fuchsia-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400`}
+                            onClick={() => {
+                              setColorId({ id: productOption._id, index });
+                              setRamId({ id: "", index: -1 });
+                              setIdOption(productOption._id);
+                            }}
+                          >
+                            {productOption?.color}
+                          </button>
+                        )
+                      )}
                     </div>
                   </div>
                   <div className="mb-8 ">
@@ -140,20 +174,36 @@ function Detail() {
                     </h2>
                     <div>
                       <div className="flex flex-wrap -mb-2">
-                        <button className="px-4 py-2 mb-2 mr-4 font-semibold border border-purple-600 rounded-md hover:border-fuchsia-400 dark:border-gray-400 hover:text-fuchsia-600 dark:hover:border-gray-300 dark:text-gray-400">
+                        {productOptions?.map(
+                          (productOption: option, index: number) => (
+                            <button
+                              className={`px-4 py-2 mb-2 mr-4 font-semibold border ${
+                                index === ramId.index ||
+                                productOption._id === colorId.id
+                                  ? "border-purple-600"
+                                  : ""
+                              } rounded-md hover:border-fuchsia-400 hover:text-fuchsia-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400`}
+                              onClick={() => {
+                                setRamId({ id: productOption._id, index });
+                                setColorId({ id: "", index: -1 });
+                                setIdOption(productOption._id);
+                              }}
+                            >
+                              {productOption?.ram}
+                            </button>
+                          )
+                        )}
+                        {/* <button className="px-4 py-2 mb-2 mr-4 font-semibold border border-purple-600 rounded-md hover:border-fuchsia-400 dark:border-gray-400 hover:text-fuchsia-600 dark:hover:border-gray-300 dark:text-gray-400">
                           8 GB
-                        </button>
-                        <button className="px-4 py-2 mb-2 mr-4 font-semibold border rounded-md hover:border-fuchsia-400 hover:text-fuchsia-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400">
-                          16 GB
-                        </button>
-                        <button className="px-4 py-2 mb-2 font-semibold border rounded-md hover:border-fuchsia-400 hover:text-fuchsia-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400">
-                          1 TB
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-4">
-                    <button className="w-full p-4 bg-purple-500 rounded-md lg:w-5/5  text-gray-50 hover:bg-purple-600 ">
+                    <button
+                      className="w-full p-4 bg-purple-500 rounded-md lg:w-5/5  text-gray-50 hover:bg-purple-600 "
+                      onClick={() => handleAddCart()}
+                    >
                       Add to cart
                     </button>
                   </div>
@@ -459,7 +509,7 @@ function Detail() {
                 </div>
               </aside>
             </article>
-			<article>
+            <article>
               <div className="flex items-center mb-4">
                 <img
                   className="w-10 h-10 me-4 rounded-full"
@@ -568,7 +618,7 @@ function Detail() {
                 </div>
               </aside>
             </article>
-			<article>
+            <article>
               <div className="flex items-center mb-4">
                 <img
                   className="w-10 h-10 me-4 rounded-full"
@@ -679,6 +729,7 @@ function Detail() {
             </article>
           </div>
         </section>
+        <ToastContainer />
       </div>
     </>
   );

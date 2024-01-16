@@ -38,7 +38,7 @@ const responsive = {
 function Home() {
   const dispatch = useAppDispatch();
   const products = useSelector((state: any) => state.products.data);
-
+	console.log(products)
   useEffect(() => {
     dispatch(getAllProduct());
   }, []);
@@ -62,6 +62,7 @@ function Home() {
               <>
                 {
                   <Product
+					productId={product._id}
                     productName={product.productName}
                     price={product.price}
                     idUrl={product.image[index]}
@@ -97,6 +98,7 @@ function Home() {
               <>
                 {
                   <Product
+				  	productId={product._id}
                     productName={product.productName}
                     price={product.price}
                     idUrl={product.image[index]}
@@ -131,6 +133,7 @@ function Home() {
               <>
                 {
                   <Product
+				 	productId={product._id}
                     productName={product.productName}
                     price={product.price}
                     idUrl={product.image[index]}

@@ -53,10 +53,8 @@ export const editProduct = createAsyncThunk(
 export const getProductById = createAsyncThunk(
 	"products/getProductById",
 	async ( payload: any ,{ rejectWithValue }) => {
-		console.log(payload)
 		try {
 			const response = await axiosAdmin.get("products/edit/" + payload)
-			console.log(response)
 			return response
 		}catch(error: any) {
 			throw rejectWithValue(error.message)

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import banner from "../../assets/logo/icon1-50x50.webp";
 import product from "../../assets/product/iphone-14-pro-max-256gb-(52).webp"
 import { HandlePrice } from "../../utils/constant";
-function Product({ productName, price, idUrl} : any) {
+function Product({productId, productName, price, idUrl} : any) {
   return (
     <>
       {/* <div className="grid-cols-1 sm:grid md:grid-cols-4 ">
@@ -95,7 +95,7 @@ function Product({ productName, price, idUrl} : any) {
         </div>
       </div> */}
       <div className="mx-3 mt-6 flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 sm:shrink-0 sm:grow sm:basis-0 w-64">
-        <Link to={'/product-detail/dasdadsda'} className="flex justify-center">
+        <Link to={'/product-detail/'+ productId} className="flex justify-center">
           <img
             className="rounded-t-lg hover:opacity-70 h-52 pt-4 hover:bottom-4 relative"
             src={idUrl ? `https://drive.google.com/thumbnail?id=${idUrl}` : product}
