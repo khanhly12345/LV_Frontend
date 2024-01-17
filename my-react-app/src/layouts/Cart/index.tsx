@@ -1,7 +1,45 @@
+import { useSelector } from "react-redux";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import { useAppDispatch } from "../../redux/store";
+import { useCallback, useEffect, useState } from "react";
+import { getProductOptions } from "../../redux/slice/CartSlice";
+import { HandlePrice } from "../../utils/constant";
+
 function Cart() {
+	const dispatch = useAppDispatch()
+	const carts = useSelector((state: any) => state?.carts?.cartItems)
+	const [quantities, setQuantities] = useState<number[]>([])
+
+	useEffect(() => {
+		dispatch(getProductOptions())
+		setQuantities(new Array(carts.length).fill(1))
+	}, [dispatch, carts.length])
+
+	const arrayPrice = carts.map((cart: any) => parseInt(cart.productId.price));
+	const newTotalPrice = arrayPrice.reduce((initPrice: number, currentPrice: number, index: number) => (
+		initPrice + (currentPrice || 0) * (quantities[index])
+	), 0);
+
+
+	const inCreaseQuantity = (index: number) => {
+        const newQuantities = [...quantities]
+        newQuantities[index] = newQuantities[index]  + 1
+        setQuantities(newQuantities)
+    }
+
+    const deCreaseQuantity = useCallback((index: number) => {
+        const newQuantities = [...quantities]
+        if(newQuantities[index] > 1) {
+             newQuantities[index] = newQuantities[index]  - 1
+            setQuantities(newQuantities)
+        }
+    }, [quantities])
+
+
   return (
     <>
-      <div className="bg-gray-100 h-screen py-8">
+	<Breadcrumbs value="Shopping Cart" />
+      <div className="bg-gray-100 h-screen ">
         <div className="container mx-auto px-4">
           <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
           <div className="flex flex-col md:flex-row gap-4">
@@ -17,6 +55,46 @@ function Cart() {
                     </tr>
                   </thead>
                   <tbody>
+
+						{
+							carts?.map((cart: any, index: any) => (
+								<>
+								<tr>
+									<td className="py-4">
+									<div className="flex items-center">
+										<img
+										className="h-16 w-20 mr-4"
+										src={`https://drive.google.com/thumbnail?id=${cart.productId.image[0]}&sz=w200-h100`}
+										alt=""
+										/>
+										<span className="font-semibold">{cart.productId.productName}</span>
+									</div>
+									</td>
+									<td className="py-4">{HandlePrice(cart.productId.price)}</td>
+									<td className="py-4">
+									<div className="flex items-center">
+										<button
+											className="border rounded-md py-2 px-4 mr-2"
+											onClick={() => deCreaseQuantity(index)}
+										>
+										-
+										</button>
+										<span className="text-center w-8">{quantities[index]}</span>
+										<button
+											className="border rounded-md py-2 px-4 ml-2"
+											onClick={() => inCreaseQuantity(index)}
+										>
+										+
+										</button>
+									</div>
+									</td>
+									<td className="py-4">{ HandlePrice(quantities[index] * cart.productId.price)}</td>
+									<td>X</td>
+									</tr>
+								</>
+							))
+						}
+
                     <tr>
                       <td className="py-4">
                         <div className="flex items-center">
@@ -35,33 +113,10 @@ function Cart() {
                             -
                           </button>
                           <span className="text-center w-8">1</span>
-                          <button className="border rounded-md py-2 px-4 ml-2">
-                            +
-                          </button>
-                        </div>
-                      </td>
-                      <td className="py-4">$19.99</td>
-					  <td>X</td>
-                    </tr>
-                    <tr>
-                      <td className="py-4">
-                        <div className="flex items-center">
-                          <img
-                            className="h-16 w-16 mr-4"
-                            src="https://via.placeholder.com/150"
-                            alt=""
-                          />
-                          <span className="font-semibold">Product name</span>
-                        </div>
-                      </td>
-                      <td className="py-4">$19.99</td>
-                      <td className="py-4">
-                        <div className="flex items-center">
-                          <button className="border rounded-md py-2 px-4 mr-2">
-                            -
-                          </button>
-                          <span className="text-center w-8">1</span>
-                          <button className="border rounded-md py-2 px-4 ml-2">
+                          <button
+						  	className="border rounded-md py-2 px-4 ml-2"
+							// onClick={() => setQuantities(index)}
+						  >
                             +
                           </button>
                         </div>
@@ -91,7 +146,7 @@ function Cart() {
                 <hr className="my-2" />
                 <div className="flex justify-between mb-2">
                   <span className="font-semibold">Total</span>
-                  <span className="font-semibold">$21.98</span>
+                  <span className="font-semibold text-red-600">{ HandlePrice(newTotalPrice) }</span>
                 </div>
                 <button className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">
                   Checkout

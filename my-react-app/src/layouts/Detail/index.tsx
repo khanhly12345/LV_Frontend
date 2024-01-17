@@ -11,6 +11,7 @@ import { getProductOptionsById } from "../../redux/slice/OptionsProductSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { stringify } from "querystring";
+import { addCartId } from "../../redux/slice/CartSlice";
 
 interface option {
   _id: string;
@@ -42,11 +43,16 @@ function Detail() {
 
   const handleAddCart = () => {
     if (idOption && !cartId.includes(idOption)) {
-      localStorage.setItem("cart", JSON.stringify([...cartId, idOption]));
+    //   localStorage.setItem("cart", JSON.stringify([...cartId, idOption]));
+		dispatch(addCartId(idOption))
       toast.success("Success Notification !", {
         autoClose: 1000,
       });
-    }
+    }else {
+		toast.warning("Chose option or the option have existed in cart", {
+			autoClose: 1000,
+		});
+	}
   };
 
   return (
@@ -87,7 +93,7 @@ function Detail() {
                             } b hover:border-fuchsia-300`}
                           >
                             <img
-                              src={`https://drive.google.com/thumbnail?id=${thumnails}&sz=w600-h400`}
+                              src={`https://drive.google.com/thumbnail?id=${thumnails}&sz=w100-h100`}
                               alt=""
                               className="object-cover w-full lg:h-20"
                             />
