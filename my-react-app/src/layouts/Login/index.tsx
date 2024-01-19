@@ -1,4 +1,21 @@
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../redux/store";
+import { logIn } from "../../redux/slice/UserSlice";
+
 function Login() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const onSubmit = async (data: any) => {
+    dispatch(logIn(data));
+  };
   return (
     <div className="flex justify-center">
       <section className="h-screen w-10/12 bg-white rounded-md m-4">
@@ -16,9 +33,14 @@ function Login() {
             </div>
 
             <div className="md:w-8/12 lg:ml-6 lg:w-5/12">
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-6">
-					<label htmlFor="" className="block mb-2 text-sm font-medium text-gray-900">Email Address </label>
+                  <label
+                    htmlFor=""
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Email Address{" "}
+                  </label>
                   <input
                     type="text"
                     placeholder="Email"
@@ -36,10 +58,16 @@ function Login() {
                         focus-visible:shadow-none
                         focus:border-primary
                         "
+                    {...register("email")}
                   />
                 </div>
                 <div className="mb-6">
-				<label htmlFor="" className="block mb-2 text-sm font-medium text-gray-900">Password </label>
+                  <label
+                    htmlFor=""
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Password{" "}
+                  </label>
                   <input
                     type="password"
                     placeholder="Password"
@@ -57,6 +85,7 @@ function Login() {
                         focus-visible:shadow-none
                         focus:border-primary
                         "
+                    {...register("password")}
                   />
                 </div>
 
@@ -116,27 +145,24 @@ function Login() {
                   Continue with Facebook
                 </a>
               </form>
-			  <div className="float-right">
-          <a
-            href="google.com"
-            className="flex font-semibold text-indigo-600 text-sm mt-10"
-          >
-            <svg
-              className="fill-current mr-2 text-indigo-600 w-4"
-              viewBox="0 0 448 512"
-            >
-              <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
-            </svg>
-            Continue Shopping
-          </a>
-        </div>
+              <div className="float-right">
+                <a
+                  href="google.com"
+                  className="flex font-semibold text-indigo-600 text-sm mt-10"
+                >
+                  <svg
+                    className="fill-current mr-2 text-indigo-600 w-4"
+                    viewBox="0 0 448 512"
+                  >
+                    <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
+                  </svg>
+                  Continue Shopping
+                </a>
+              </div>
             </div>
-
           </div>
-
         </div>
       </section>
-
     </div>
   );
 }
