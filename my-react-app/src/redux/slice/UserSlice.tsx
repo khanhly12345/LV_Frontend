@@ -19,7 +19,19 @@ export const logIn = createAsyncThunk(
 	async (payload: any, { rejectWithValue }) => {
 		try {
 			const response = await axiosAdmin.post('auth/login', payload)
-			console.log(response)
+			return response;
+		} catch (error) {
+			console.log(error)
+			return rejectWithValue(error)
+		}
+	}
+);
+
+export const getUser = createAsyncThunk(
+	"user/getUser",
+	async ( _ , { rejectWithValue }) => {
+		try {
+			const response = await axiosAdmin.get('users/profile')
 			return response;
 		} catch (error) {
 			return rejectWithValue(error)

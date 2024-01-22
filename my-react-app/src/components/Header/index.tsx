@@ -1,14 +1,39 @@
 import { useSelector } from "react-redux";
 import logoTop from "../../assets/logo/logotop.webp";
-import { getCart } from "../../utils/constant";
-import { useEffect } from "react";
+import { accessToken, getCart } from "../../utils/constant";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../redux/store";
 import { getAllCartId, addCartId } from "../../redux/slice/CartSlice";
 import { Link } from "react-router-dom";
+import { getUser } from "../../redux/slice/UserSlice";
+import {
+  Avatar,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+  Typography,
+} from "@material-tailwind/react";
+
+interface Profile {
+  email: string;
+  urlId: string;
+}
 
 function Header() {
-	const cart = useSelector((state: any) => state?.carts?.cartId)
+  const cart = useSelector((state: any) => state?.carts?.cartId);
 
+  const dispatch = useAppDispatch();
+  const [profile, setProfile] = useState<Profile>();
+
+  useEffect(() => {
+    const token = accessToken();
+    if (token) {
+      dispatch(getUser()).then((res: any) => {
+        setProfile(res.payload);
+      });
+    }
+  }, [dispatch]);
   return (
     <>
       <div>
@@ -98,30 +123,61 @@ function Header() {
               </div>
 
               <div className="flex cursor-pointer items-center gap-x-1 rounded-md py-2 px-4 hover:bg-gray-100">
-				<Link
-					to="/cart"
-					className="flex"
-				>
-					<div className="relative">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						className="h-5 w-5 text-gray-500"
-						viewBox="0 0 20 20"
-						fill="currentColor"
-					>
-						<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-					</svg>
-					<span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 p-2 text-xs text-white">
-						{cart.length}
-					</span>
-					</div>
-					<span className="text-sm font-medium pl-2">Cart</span>
-				</Link>
+                <Link to="/cart" className="flex">
+                  <div className="relative">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                    </svg>
+                    <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 p-2 text-xs text-white">
+                      {cart.length}
+                    </span>
+                  </div>
+                  <span className="text-sm font-medium pl-2">Cart</span>
+                </Link>
               </div>
-
-              <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md border py-2 px-4 hover:bg-gray-100">
-                <span className="text-sm font-medium">Sign in</span>
-              </div>
+              {profile ? (
+                <Menu>
+                  <MenuHandler>
+                    <Avatar
+                      placeholder=""
+                      src="https://docs.material-tailwind.com/img/face-2.jpg"
+                      alt="avatar"
+                    />
+                  </MenuHandler>
+                  <MenuList placeholder="">
+                    <MenuItem placeholder="">
+                      <Typography
+                        // variant="text"
+                        color="blue-gray"
+                        className="mb-1 font-normal"
+						placeholder=""
+                      >
+                        { profile.email ? 'hi' : 'khanhly'}
+                      </Typography>
+                    </MenuItem>
+					<hr />
+					<MenuItem placeholder="">
+					  <Typography
+                        // variant="text"
+                        color="blue-gray"
+                        className="mb-1 font-normal"
+						placeholder=""
+                      >
+                        Log Out
+                      </Typography>
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              ) : (
+                <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md border py-2 px-4 hover:bg-gray-100">
+                  <span className="text-sm font-medium">Sign in</span>
+                </div>
+              )}
             </div>
           </div>
 

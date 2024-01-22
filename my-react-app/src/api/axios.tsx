@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL, accessToken } from "../utils/constant";
+import { BASE_URL, accessToken, refreshToken } from "../utils/constant";
 
 const axiosAdmin = axios.create({
 	// withCredentials: true,
@@ -33,9 +33,21 @@ axiosAdmin.interceptors.response.use(
 		// Do something with response data
 		return response.data;
 	},
-	function (error) {
+	async function (error) {
 		// Any status codes that falls outside the range of 2xx cause this function to trigger
 		// Do something with response error
+		if(error.response.status === 401 ) {
+			const refresh_token = refreshToken()
+			const response: any = await axiosAdmin.post('/auth/refresh_token', {refresh_token});
+			console.log(error.response.status)
+			axiosAdmin.defaults.headers.common['Authorization'] = `Bearer ${response.access_token}`;
+
+        // Retry the original request
+			localStorage.setItem('access_token', response.access_token)
+			const originalRequest = error.config;
+			originalRequest.headers['Authorization'] = `Bearer ${response.access_token}`;
+
+		}
 		return Promise.reject(error);
 	},
 );

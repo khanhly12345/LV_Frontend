@@ -5,6 +5,11 @@ export const accessToken = () => {
 	return getAuth
 }
 
+export const refreshToken = () => {
+	const getAuth = localStorage.getItem('refresh_token')
+	return getAuth
+}
+
 export const HandlePrice = (value: any) => {
     const VND = new Intl.NumberFormat('vi-VN', {
         style: 'currency',

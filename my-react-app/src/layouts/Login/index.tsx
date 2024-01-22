@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../redux/store";
 import { logIn } from "../../redux/slice/UserSlice";
+import { useState } from "react";
 
 function Login() {
   const {
@@ -12,9 +13,24 @@ function Login() {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [error, setError] = useState<string>('')
 
   const onSubmit = async (data: any) => {
-    dispatch(logIn(data));
+    dispatch(logIn(data))
+		.then((res: any) => {
+			console.log(res.payload.status)
+			if(res.payload.status === 401) {
+				setError(res.payload.response)
+			}
+			if(res.payload.access_token && res.payload.refresh_token) {
+				localStorage.setItem('access_token', res.payload.access_token)
+				localStorage.setItem('refresh_token', res.payload.refresh_token)
+				navigate('/')
+			}
+		})
+		.catch((errors : any) => {
+			console.log(errors)
+		})
   };
   return (
     <div className="flex justify-center">
@@ -33,6 +49,7 @@ function Login() {
             </div>
 
             <div className="md:w-8/12 lg:ml-6 lg:w-5/12">
+				<p className="text-red-600">{ error ? error : ''}</p>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-6">
                   <label

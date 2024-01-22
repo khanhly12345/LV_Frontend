@@ -41,6 +41,7 @@ function Home() {
 	console.log(products)
   useEffect(() => {
     dispatch(getAllProduct());
+	window.scroll(0, 0)
   }, []);
 
   return (
