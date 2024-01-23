@@ -3,7 +3,10 @@ import Avatar from "../../assets/avatar/79d31e406fe3d3d7322b18666184911d.jpg";
 import NavUser from "../../components/NavUser";
 import { Link } from "react-router-dom";
 import { Button } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
 function ProfileUser() {
+	const profile = useSelector((state: any) => state?.users.profile)
+
   return (
     <>
       <Breadcrumbs value="Profile User" />
@@ -22,30 +25,32 @@ function ProfileUser() {
                   <tbody>
                     <tr>
                       <td className="py-2 px-4 w-4/12">Tên</td>
-                      <td className="py-2 px-4 ">Content 1</td>
+                      <td className="py-2 px-4 text-red-600">{ profile.fullname }</td>
                     </tr>
                     <tr>
                       <td className="py-2 px-4 ">SĐT</td>
-                      <td className="py-2 px-4 ">Content 2</td>
+                      <td className="py-2 px-4 text-red-600">{ profile.phone }</td>
                     </tr>
                     <tr>
                       <td className="py-2 px-4 ">Thành phố</td>
-                      <td className="py-2 px-4 ">Content 2</td>
+                      <td className="py-2 px-4 text-red-600">{ profile.city }</td>
                     </tr>
                     <tr>
                       <td className="py-2 px-4 ">Huyện</td>
-                      <td className="py-2 px-4 ">Content 2</td>
+                      <td className="py-2 px-4 text-red-600">{ profile.distrist }</td>
                     </tr>
                     <tr>
                       <td className="py-2 px-4 ">Ghi chú thêm</td>
-                      <td className="py-2 px-4 ">Content 2</td>
+                      <td className="py-2 px-4 text-red-600">{ profile.inforMore || 'Giao hàng ở gần hẻm' }</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div>
-                <img src={Avatar} alt="" className="w-20 h-20 rounded-full" />
-                <div className="text-lg relative left-4">Avatar</div>
+              <div className="border flex justify-center items-center border-[#9c27b0] rounded-md">
+				<div>
+					<img src={`https://drive.google.com/thumbnail?id=${profile.urlId}`} alt="" className="w-20 h-20 rounded-full left-12 bottom-4 relative" />
+					<div className="text-lg relative left-4 text-[#9c27b0] tracking-widest">{ profile.fullname }</div>
+				</div>
               </div>
             </div>
           </div>

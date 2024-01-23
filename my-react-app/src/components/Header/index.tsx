@@ -12,6 +12,7 @@ import {
   MenuHandler,
   MenuItem,
   MenuList,
+  Tooltip,
   Typography,
 } from "@material-tailwind/react";
 
@@ -22,16 +23,18 @@ interface Profile {
 
 function Header() {
   const cart = useSelector((state: any) => state?.carts?.cartId);
+  const profile = useSelector((state: any) => state?.users.profile);
 
   const dispatch = useAppDispatch();
-  const [profile, setProfile] = useState<Profile>();
+  //   const [profile, setProfile] = useState<Profile>();
 
   useEffect(() => {
     const token = accessToken();
     if (token) {
-      dispatch(getUser()).then((res: any) => {
-        setProfile(res.payload);
-      });
+      //   dispatch(getUser()).then((res: any) => {
+      //     setProfile(res.payload);
+      //   });
+      dispatch(getUser());
     }
   }, [dispatch]);
   return (
@@ -141,38 +144,40 @@ function Header() {
                 </Link>
               </div>
               {profile ? (
-                <Menu>
-                  <MenuHandler>
-                    <Avatar
-                      placeholder=""
-                      src="https://docs.material-tailwind.com/img/face-2.jpg"
-                      alt="avatar"
-                    />
-                  </MenuHandler>
-                  <MenuList placeholder="">
-                    <MenuItem placeholder="">
-                      <Typography
-                        // variant="text"
-                        color="blue-gray"
-                        className="mb-1 font-normal"
-						placeholder=""
-                      >
-                        { profile.email ? 'hi' : 'khanhly'}
-                      </Typography>
-                    </MenuItem>
-					<hr />
-					<MenuItem placeholder="">
-					  <Typography
-                        // variant="text"
-                        color="blue-gray"
-                        className="mb-1 font-normal"
-						placeholder=""
-                      >
-                        Log Out
-                      </Typography>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                <Tooltip content={profile.email}>
+                  <Menu>
+                    <MenuHandler>
+                      <Avatar
+                        placeholder=""
+                        src={`https://drive.google.com/thumbnail?id=${profile.urlId}`}
+                        alt="avatar"
+                      />
+                    </MenuHandler>
+                    <MenuList placeholder="">
+                      <MenuItem placeholder="">
+                        <Typography
+                          // variant="text"
+                          color="red"
+                          className="mb-1 font-normal"
+                          placeholder=""
+                        >
+                          Profile
+                        </Typography>
+                      </MenuItem>
+                      <hr />
+                      <MenuItem placeholder="">
+                        <Typography
+                          // variant="text"
+                          color="blue-gray"
+                          className="mb-1 font-normal"
+                          placeholder=""
+                        >
+                          Log Out
+                        </Typography>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </Tooltip>
               ) : (
                 <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md border py-2 px-4 hover:bg-gray-100">
                   <span className="text-sm font-medium">Sign in</span>

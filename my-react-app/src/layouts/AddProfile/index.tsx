@@ -4,8 +4,12 @@ import NavUser from "../../components/NavUser";
 import { Link } from "react-router-dom";
 import { Button } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
+import { useAppDispatch } from "../../redux/store";
+import { addUser } from "../../redux/slice/UserSlice";
 
 function AddProfile() {
+	const dispatch = useAppDispatch()
+
 	const {
 		register,
 		handleSubmit,
@@ -13,15 +17,20 @@ function AddProfile() {
 		control,
 	  } = useForm();
 	  const submitForm = (data: any) => {
-		const formData = new FormData()
-		formData.append('fullname', data.fullname)
-		formData.append('avatar', data.avatar[0])
-		formData.append('phone', data.phone)
-		formData.append('city', data.city)
-		formData.append('district', data.district)
-		formData.append('note', data.note)
-		console.log(formData)
+		console.log(data?.fullname)
+		const formData = new FormData();
+		const fullName = data.fullname
+		formData.append("fullname", fullName);
+		formData.append("avatar", data.avatar[0]);
+		formData.append("phone", data?.phone);
+		formData.append("city", data?.city);
+		formData.append("distrist", data?.district);
+		formData.append("moreInfor", data?.note);
+
+		console.log(formData);
+		dispatch(addUser(formData))
 	  };
+
   return (
     <>
       <Breadcrumbs value="Profile User" />
@@ -32,7 +41,7 @@ function AddProfile() {
             <div className="text-2xl text-blue-600 mb-2">ADD PROFILE</div>
             <hr className="mt-4" />
             <div className="p-4 ">
-              <form onSubmit={handleSubmit(submitForm)}>
+              <form onSubmit={handleSubmit(submitForm)} encType="multipart/form-data">
 				<div className="mb-4 grid  grid-cols-2">
 					<div className="mb-1 p-2">
 						<label
@@ -106,7 +115,7 @@ function AddProfile() {
 							type="text"
 							placeholder="Note"
 							required
-							{...register("note")}
+							{...register("moreInfor")}
 						/>
 					</div>
 					<div className="mb-1 p-2">

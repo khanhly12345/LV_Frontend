@@ -15,6 +15,7 @@ function Products() {
   const products = useSelector((state: any) => state?.products?.data);
   const status = useSelector((state: any) => state?.products?.status);
 
+
   console.log(status);
 
   useEffect(() => {

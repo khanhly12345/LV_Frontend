@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosAdmin from "../../api/axios";
+import { getIdFromToken } from "../../utils/constant";
 
 export const signUp = createAsyncThunk(
 	"user/signup",
@@ -39,16 +40,35 @@ export const getUser = createAsyncThunk(
 	}
 );
 
+export const addUser = createAsyncThunk(
+	"user/addUser",
+	async ( payload: any , { rejectWithValue }) => {
+		console.log(payload)
+		const id = getIdFromToken()
+		try {
+			const response = await axiosAdmin.post('users/adduser/'+ id, payload)
+			return response;
+		} catch (error) {
+			return rejectWithValue(error)
+		}
+	}
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
     user: [],
-	status: ''
+	status: '',
+	profile: {}
   },
   reducers: {},
   extraReducers(builder) {
     builder.addCase(signUp.fulfilled, (state: any, actions) => {
 		state.status = 'sucess'
+	});
+	builder.addCase(getUser.fulfilled, (state: any, actions) => {
+		console.log(actions.payload)
+		state.profile = actions.payload
 	});
   },
 });

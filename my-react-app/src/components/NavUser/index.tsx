@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Avatar from "../../assets/avatar/79d31e406fe3d3d7322b18666184911d.jpg";
 import { useEffect, useState } from "react";
 import { getPathName } from "../../utils/getPathName";
+import { useSelector } from "react-redux";
 
 function NavUser() {
   const [pathName, setPathName] = useState<String>("");
@@ -29,6 +30,8 @@ function NavUser() {
     },
   ];
 
+  const profile = useSelector((state: any) => state?.users.profile)
+
   useEffect(() => {
     const currentUrl = window.location.href;
     const path = getPathName(currentUrl);
@@ -40,9 +43,9 @@ function NavUser() {
     <div className="w-3/12 mr-4">
       <div className="p-4">
         <div className="flex">
-          <img src={Avatar} alt="" className="w-12 h-12 rounded-full" />
+          <img src={`https://drive.google.com/thumbnail?id=${profile.urlId}`} alt="" className="w-12 h-12 rounded-full" />
           <div className="flex flex-col pl-4 font-semibold">
-            <span>khanhly1234567</span>
+            <span className="truncate w-48">{ profile.email }</span>
             <span className=" flex text-gray-400">
               <svg
                 style={{

@@ -1,3 +1,6 @@
+
+import { jwtDecode } from "jwt-decode";
+
 export const BASE_URL = "http://localhost:3001/api/"
 
 export const accessToken = () => {
@@ -23,4 +26,16 @@ export const getCart = () => {
 	const cartString = localStorage.getItem('cart');
 	const cart = cartString ? JSON.parse(cartString) : []
 	return cart
+}
+
+export const decodedToken = () => {
+	const token: any = accessToken()
+	const decoded = jwtDecode(token)
+	return decoded;
+}
+
+export const getIdFromToken = () => {
+	const decode: any = decodedToken()
+	console.log(decode.email._id)
+	return decode.email._id;
 }
