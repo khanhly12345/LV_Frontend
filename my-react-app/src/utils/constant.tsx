@@ -39,3 +39,13 @@ export const getIdFromToken = () => {
 	console.log(decode.email._id)
 	return decode.email._id;
 }
+
+export const getQuantities = () => {
+	const quantities: any = localStorage.getItem('quantity')
+	return JSON.parse(quantities);
+}
+
+export const getTotal = () => {
+	const total: any = localStorage.getItem('total')
+	return total;
+}

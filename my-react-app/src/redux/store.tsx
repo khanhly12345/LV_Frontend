@@ -5,6 +5,7 @@ import OptionsProductSlice from "./slice/OptionsProductSlice";
 import { useDispatch } from "react-redux";
 import CartSlice from "./slice/CartSlice";
 import UserSlice from "./slice/UserSlice";
+import OrderSlice from "./slice/OrderSlice";
 
 
 export const store = configureStore({
@@ -12,7 +13,8 @@ export const store = configureStore({
 		productOptions: OptionsProductSlice,
 		products: productsSlice,
 		carts: CartSlice,
-		users: UserSlice
+		users: UserSlice,
+		orders: OrderSlice
 	}
 })
 

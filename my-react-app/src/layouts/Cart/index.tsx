@@ -4,9 +4,11 @@ import { useAppDispatch } from "../../redux/store";
 import { useCallback, useEffect, useState } from "react";
 import { getProductOptions } from "../../redux/slice/CartSlice";
 import { HandlePrice } from "../../utils/constant";
+import { useNavigate } from "react-router-dom";
 
 function Cart() {
 	const dispatch = useAppDispatch()
+	const navigate = useNavigate()
 	const carts = useSelector((state: any) => state?.carts?.cartItems)
 	const [quantities, setQuantities] = useState<number[]>([])
 
@@ -35,6 +37,11 @@ function Cart() {
         }
     }, [quantities])
 
+	const checkOut = () => {
+		localStorage.setItem('quantity', JSON.stringify(quantities))
+		localStorage.setItem('total', newTotalPrice)
+		navigate('/checkout')
+	}
 
   return (
     <>
@@ -148,7 +155,10 @@ function Cart() {
                   <span className="font-semibold">Total</span>
                   <span className="font-semibold text-red-600">{ HandlePrice(newTotalPrice) }</span>
                 </div>
-                <button className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">
+                <button
+					className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full"
+					onClick={() => checkOut()}
+				>
                   Checkout
                 </button>
               </div>

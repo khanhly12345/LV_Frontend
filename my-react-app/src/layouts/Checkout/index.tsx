@@ -1,6 +1,83 @@
+import { useNavigate } from "react-router-dom";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import { useAppDispatch } from "../../redux/store";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getProductOptions } from "../../redux/slice/CartSlice";
+import { HandlePrice, getQuantities, getTotal } from "../../utils/constant";
+import {
+  PayPalButtons,
+  PayPalScriptProvider,
+  usePayPalScriptReducer,
+} from "@paypal/react-paypal-js";
+import { createOrder } from "../../redux/slice/OrderSlice";
+
 function Checkout() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const carts = useSelector((state: any) => state?.carts?.cartItems);
+  const profile = useSelector((state: any) => state?.users.profile);
+
+  const quantities = getQuantities();
+  const total = getTotal();
+  const userId = profile._id;
+
+  useEffect(() => {
+    dispatch(getProductOptions());
+  }, [dispatch]);
+
+  console.log(carts);
+
+  const initialOptions = {
+    clientId:
+      "AbPTZu5SfuYYgHmtQwLIOP6ecl9KaVZlpSUGjv6_XHwjRUZtqsdjjwUwdnQGQHdMMAnnwd1a-ZHda7dh",
+    currency: "USD",
+    intent: "capture",
+  };
+
+  const onCreateOrder = (data: any, actions: any) => {
+    return actions.order.create({
+      purchase_units: [
+        {
+          amount: {
+            value: "0.01",
+          },
+        },
+      ],
+    });
+  };
+
+  const onApproveOrder =  (data: any, actions: any) => {
+	const detailCart2 = detailCart
+    return actions.order.capture().then((details: any) => {
+      const name = details.payer.name.given_name;
+      console.log(details);
+    	handleSubit(details.status, "PAYPAL", detailCart2, userId);
+    });
+  };
+
+  let detailCart = carts.map((cart: any, index: number) => ({
+    item: cart._id,
+    quantity: quantities[index],
+  }));
+
+  const handleSubit = (status: string, method: string, detailCart: any, userId: string) => {
+    const  order = {
+      userId: userId,
+      items: detailCart,
+      payment: {
+        status,
+        method: method,
+      },
+      total: total,
+    };
+    console.log(order);
+	dispatch(createOrder(order))
+  };
+
   return (
     <>
+      <Breadcrumbs value="Check Out" />
       <div className="relative mx-auto w-10/12 bg-white mt-4 rounded-md">
         <div className="grid min-h-screen grid-cols-10">
           <div className="col-span-full py-6 px-4 sm:py-12 lg:col-span-6 lg:py-24">
@@ -97,11 +174,12 @@ function Checkout() {
                         User Information
                       </h2>
                       <div className="mb-2">
-                        <span className="font-semibold">Name:</span> John Doe
+                        <span className="font-semibold">Name:</span>{" "}
+                        {profile.fullname}
                       </div>
-                      <div className="mb-2">
+                      <div className="mb-2 break-words">
                         <span className="font-semibold">Email:</span>{" "}
-                        john.doe@example.com
+                        {profile.email}
                       </div>
                       {/* Add more user information as needed */}
                     </div>
@@ -112,17 +190,16 @@ function Checkout() {
                         Shipping Address
                       </h2>
                       <div className="mb-2">
-                        <span className="font-semibold">Street:</span> 123 Main
-                        Street
+                        <span className="font-semibold">City:</span>{" "}
+                        {profile.city}
                       </div>
                       <div className="mb-2">
-                        <span className="font-semibold">City:</span> Cityville
+                        <span className="font-semibold">District:</span>{" "}
+                        {profile.distrist}
                       </div>
                       <div className="mb-2">
-                        <span className="font-semibold">State:</span> Stateville
-                      </div>
-                      <div className="mb-2">
-                        <span className="font-semibold">Zip Code:</span> 12345
+                        <span className="font-semibold">Phone:</span>{" "}
+                        {profile.phone}
                       </div>
                       {/* Add more address information as needed */}
                     </div>
@@ -141,9 +218,18 @@ function Checkout() {
               <button
                 type="submit"
                 className="mt-4 inline-flex w-full items-center justify-center rounded bg-teal-600 py-2.5 px-4 text-base font-semibold tracking-wide text-white text-opacity-80 outline-none ring-offset-2 transition hover:text-opacity-100 focus:ring-2 focus:ring-teal-500 sm:text-lg"
+                onClick={() => handleSubit("1", "1", detailCart, userId)}
               >
                 Place Order
               </button>
+              <div>OR</div>
+              <PayPalScriptProvider options={initialOptions}>
+                <PayPalButtons
+                  style={{ layout: "horizontal" }}
+                  createOrder={(data, actions) => onCreateOrder(data, actions)}
+                  onApprove={(data, actions) => onApproveOrder(data, actions)}
+                />
+              </PayPalScriptProvider>
             </div>
             <div className="ml-28">
               <a
@@ -172,24 +258,31 @@ function Checkout() {
             </div>
             <div className="relative">
               <ul className="space-y-5">
-                <li className="flex justify-between">
-                  <div className="inline-flex">
-                    <img
-                      src="https://images.unsplash.com/photo-1620331311520-246422fd82f9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fGhhaXIlMjBkcnllcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-                      alt=""
-                      className="max-h-16"
-                    />
-                    <div className="ml-3">
-                      <p className="text-base font-semibold text-white">
-                        Nano Titanium Hair Dryer
-                      </p>
-                      <p className="text-sm font-medium text-white text-opacity-80">
-                        Pdf, doc Kindle
-                      </p>
+                {carts.map((cart: any, index: number) => (
+                  <li className="flex justify-between">
+                    <div className="inline-flex">
+                      <img
+                        src={`https://drive.google.com/thumbnail?id=${cart.productId.image[0]}`}
+                        alt=""
+                        className="max-h-16"
+                      />
+                      <div className="ml-3">
+                        <p className="text-base font-semibold text-white">
+                          {cart.productId.productName}
+                        </p>
+                        <p className="text-sm font-medium text-white text-opacity-80">
+                          {cart.color}
+                        </p>
+                        <p className="text-sm font-medium text-white text-opacity-80">
+                          {"x " + quantities[index]}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-sm font-semibold text-white">$260.00</p>
-                </li>
+                    <p className="text-sm font-semibold text-white">
+                      {HandlePrice(cart.productId.price)}
+                    </p>
+                  </li>
+                ))}
                 <li className="flex justify-between">
                   <div className="inline-flex">
                     <img
@@ -213,7 +306,7 @@ function Checkout() {
               <div className="space-y-2">
                 <p className="flex justify-between text-lg font-bold text-white">
                   <span>Total price:</span>
-                  <span>$510.00</span>
+                  <span>{HandlePrice(total)}</span>
                 </p>
                 <p className="flex justify-between text-sm font-medium text-white">
                   <span>Vat: 10%</span>
