@@ -12,6 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { stringify } from "querystring";
 import { addCartId } from "../../redux/slice/CartSlice";
+import RateProduct from "../../components/RateProduct";
 
 interface option {
   _id: string;
@@ -219,7 +220,7 @@ function Detail() {
           </div>
         </section>
       </div>
-      <div className="flex justify-center pt-4">
+      {/* <div className="flex justify-center pt-4">
         <section className="overflow-hidden bg-white py-11 font-poppins dark:bg-gray-800 w-10/12 rounded-lg">
           <h1 className="font-bold relative left-24">ĐÁNH GIÁ SẢN PHẨM</h1>
           <div className="grid grid-cols-2">
@@ -736,7 +737,8 @@ function Detail() {
           </div>
         </section>
         <ToastContainer />
-      </div>
+      </div> */}
+	  <RateProduct />
     </>
   );
 }

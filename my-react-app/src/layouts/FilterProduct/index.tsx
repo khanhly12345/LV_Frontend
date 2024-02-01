@@ -1,7 +1,53 @@
 import Product from "../../components/Product";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import { useEffect, useState } from "react";
+import { useAppDispatch } from "../../redux/store";
+import { getAllProduct } from "../../redux/slice/ProductsSlice";
+import { useSelector } from "react-redux";
+import { filterProduct } from "../../redux/slice/FilterSlice";
 
 function FilterProduct() {
+	const [category, setCategory] = useState('')
+	const [brand, setBrand] = useState('')
+	const [price, setPrice] = useState('')
+	const [filter, setFilter] = useState([])
+
+	const dispacth = useAppDispatch()
+	const products = useSelector((state: any) => state.filters.list)
+
+	console.log(products)
+
+	const categories = ["smartphone", "tablet", "laptop"]
+	const brandStatic = ["samsung", "oppo", "xiaomi", "apple"]
+	const priceStatic = ["21000000", "22000000"]
+
+
+	useEffect(() => {
+		dispacth(getAllProduct())
+	}, [])
+
+	useEffect(() => {
+	    if (category !== "" || brand !== "" || price !== "") {
+			const filteredProducts = products.filter((product: any) => {
+			  const categoryMatch = !category || product.category.toLowerCase() === category.toLowerCase();
+			  const brandMatch = !brand || product.brand.toLowerCase() === brand.toLowerCase();
+			  let priceMatch = false;
+
+				if (price === "21000000") {
+					console.log(price)
+				  priceMatch = product.price < parseInt(price);
+				} else if (price === "22000000") {
+				  priceMatch = product.price > parseInt(price);
+				}
+
+			  return categoryMatch && brandMatch && priceMatch;
+			});
+			setFilter(filteredProducts);
+		  } else {
+			setFilter(products);
+		  }
+	}, [category, brand, products, price])
+
   return (
     <>
 	<Breadcrumbs value="Filter Product" />
@@ -12,18 +58,18 @@ function FilterProduct() {
                         <span>Category</span><br></br>
                         <div className="mt-5"></div>
 						<div className="text-gray-500">
-							<div>
-								<input type="checkbox" id="brand1" value="brand1" className="rounded-md"/>
-								{' '}<label htmlFor="brand1">Smart Phone</label>
-							</div>
-							<div>
-								<input type="checkbox" id="brand2" value="brand2" className="rounded-md"/>
-								{' '}<label htmlFor="brand2">Tablet</label>
-							</div>
-							<div>
-								<input type="checkbox" id="brand1" value="brand1" className="rounded-md"/>
-								{' '}<label htmlFor="brand1">Laptop</label>
-							</div>
+							{
+								categories.map((categori) => (
+									<div>
+										<input
+											type="checkbox" id="brand1" value={categori}  className="rounded-md"
+											checked ={ categori === category ? true : false}
+											onChange={(e) => setCategory(e.target.value)}
+										/>
+										{' '}<label htmlFor="brand1" className="text-1xl">{categori.toUpperCase()}</label>
+									</div>
+								))
+							}
 						</div>
 						<hr className="mt-5"></hr>
                     </div>
@@ -31,52 +77,58 @@ function FilterProduct() {
                         <span>Brand</span><br></br>
                         <div className="mt-5"></div>
 						<div className="text-gray-500">
-							<div>
-								<input type="checkbox" id="brand1" value="brand1" className="rounded-md"/>
-								{' '}<label htmlFor="brand1">Samsum</label>
-							</div>
-							<div>
-								<input type="checkbox" id="brand2" value="brand2" className="rounded-md"/>
-								{' '}<label htmlFor="brand2">Oppo</label>
-							</div>
-							<div>
-								<input type="checkbox" id="brand1" value="brand1" className="rounded-md"/>
-								{' '}<label htmlFor="brand1">Xiaomi</label>
-							</div>
-							<div>
-								<input type="checkbox" id="brand1" value="brand1" className="rounded-md"/>
-								{' '}<label htmlFor="brand1">iPhone</label>
-							</div>
+						<div className="text-gray-500">
+							{
+								brandStatic.map((value) => (
+									<div>
+										<input
+											type="checkbox" id="brand1" value={value}  className="rounded-md"
+											checked ={ value === brand ? true : false}
+											onChange={(e) => setBrand(e.target.value)}
+										/>
+										{' '}<label htmlFor="brand1" className="text-1xl">{value.toUpperCase()}</label>
+									</div>
+								))
+							}
+						</div>
 						</div>
 						<hr className="mt-5"></hr>
                     </div>
 					<div className="about_branch  p-5 font-normal">
-                        <span>Ram</span><br></br>
+                        <span>Price</span><br></br>
                         <div className="mt-5"></div>
 						<div className="text-gray-500">
-							<div>
-								<input type="checkbox" id="brand1" value="brand1" className="rounded-md"/>
-								{' '}<label htmlFor="brand1">4GB</label>
-							</div>
-							<div>
-								<input type="checkbox" id="brand2" value="brand2" className="rounded-md"/>
-								{' '}<label htmlFor="brand2">8GB</label>
-							</div>
-							<div>
-								<input type="checkbox" id="brand1" value="brand1" className="rounded-md"/>
-								{' '}<label htmlFor="brand1">16GB</label>
-							</div>
-							<div>
-								<input type="checkbox" id="brand1" value="brand1" className="rounded-md"/>
-								{' '}<label htmlFor="brand1">32GB</label>
-							</div>
+							{
+								priceStatic.map((value) => (
+									<div>
+										<input
+											type="checkbox" id="brand1" value={value}  className="rounded-md"
+											checked ={ value === price ? true : false}
+											onChange={(e) => setPrice(e.target.value)}
+										/>
+										{' '}<label htmlFor="brand1" className="text-1xl">
+												{ value === "21000000" ? "<" + value.toUpperCase() : ">" + value.toUpperCase()}
+											</label>
+									</div>
+								))
+							}
 						</div>
 						<hr className="mt-5"></hr>
                     </div>
 			</div>
 			<div className="w-9/12 rounded-md pl-4 pb-4">
 				<div className="grid grid-cols-3 bg-white overflow-y-scroll custom-scroll-container h-screen pl-4">
-					<Product />
+					{
+						filter?.map((product: any, index: number) => (
+							<Product
+								productId={product._id}
+								productName={product.productName}
+								price={product.price}
+								idUrl={product.image[0]}
+
+							/>
+						))
+					}
 					<Product />
 					<Product />
 					<Product />

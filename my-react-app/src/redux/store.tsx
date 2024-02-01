@@ -6,6 +6,8 @@ import { useDispatch } from "react-redux";
 import CartSlice from "./slice/CartSlice";
 import UserSlice from "./slice/UserSlice";
 import OrderSlice from "./slice/OrderSlice";
+import RateSlice from "./slice/RateSlice";
+import FilterSlice from "./slice/FilterSlice";
 
 
 export const store = configureStore({
@@ -14,7 +16,9 @@ export const store = configureStore({
 		products: productsSlice,
 		carts: CartSlice,
 		users: UserSlice,
-		orders: OrderSlice
+		orders: OrderSlice,
+		rates: RateSlice,
+		filters: FilterSlice,
 	}
 })
 
