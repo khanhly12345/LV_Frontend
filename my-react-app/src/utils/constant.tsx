@@ -49,3 +49,11 @@ export const getTotal = () => {
 	const total: any = localStorage.getItem('total')
 	return total;
 }
+
+export const removeAccessToken = () => {
+	localStorage.removeItem('access_token')
+}
+
+export const removeRefreshToken = () => {
+	localStorage.removeItem('refresh_token')
+}

@@ -61,7 +61,11 @@ const userSlice = createSlice({
 	status: '',
 	profile: {}
   },
-  reducers: {},
+  reducers: {
+	removeProfile: (state) => {
+		state.profile = {}
+	}
+  },
   extraReducers(builder) {
     builder.addCase(signUp.fulfilled, (state: any, actions) => {
 		state.status = 'sucess'
@@ -73,4 +77,5 @@ const userSlice = createSlice({
   },
 });
 
+export const { removeProfile } = userSlice.actions;
 export default userSlice.reducer;

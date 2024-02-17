@@ -166,3 +166,7 @@ body {
 	bottom: 20px;
 	right: 20px;
 }
+
+.w-95 {
+	width: 95%;
+}

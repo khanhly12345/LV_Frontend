@@ -20,6 +20,9 @@ import EditProduct from "./layoutAdmin/EditProduct";
 import AddProfile from "./layouts/AddProfile";
 import Orders from "./layoutAdmin/Orders";
 import Invoice from "./layoutAdmin/Invoice";
+import Search from "./layouts/Search";
+import PrivateRouters from "./utils/privateCheckOut";
+import PurchasingInformatin from "./layouts/PurchasingInformation";
 function App() {
   return (
     <>
@@ -28,7 +31,9 @@ function App() {
           <Route path="/" element={<Home />} />
 		  <Route path="/product-detail/:id" element={<Detail />} />
 		  <Route path="/cart" element={<Cart />} />
-		  <Route path="/checkout" element={<Checkout />} />
+		  <Route element={<PrivateRouters />}>
+				<Route path="/checkout" element={<Checkout />} />
+			</Route>
 		  <Route path="/login" element={<Login />} />
 		  <Route path="/signup" element={<SignUp />} />
 		  <Route path="/filter-product" element={<FilterProduct />} />
@@ -36,6 +41,8 @@ function App() {
 		  <Route path="/user/changepassword" element={<ChangePassword />} />
 		  <Route path="/user/purchase" element={<Purchase />} />
 		  <Route path="/user/addprofile" element={<AddProfile />} />
+		  <Route path="/search/:value" element={<Search />} />
+		  <Route path="/user/purchase/:id" element={<PurchasingInformatin />} />
         </Route>
 		<Route path="/admin" element={<LayoutAdmin />}>
 			<Route path="" element={<Overview />} />

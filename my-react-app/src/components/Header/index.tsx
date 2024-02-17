@@ -1,11 +1,11 @@
 import { useSelector } from "react-redux";
 import logoTop from "../../assets/logo/logotop.webp";
-import { accessToken, getCart } from "../../utils/constant";
+import { accessToken, getCart, removeAccessToken, removeRefreshToken } from "../../utils/constant";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../redux/store";
 import { getAllCartId, addCartId } from "../../redux/slice/CartSlice";
-import { Link } from "react-router-dom";
-import { getUser } from "../../redux/slice/UserSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { getUser, removeProfile } from "../../redux/slice/UserSlice";
 import {
   Avatar,
   Menu,
@@ -15,6 +15,7 @@ import {
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
+import Search from "../Search";
 
 interface Profile {
   email: string;
@@ -23,20 +24,28 @@ interface Profile {
 
 function Header() {
   const cart = useSelector((state: any) => state?.carts?.cartId);
-  const profile = useSelector((state: any) => state?.users.profile);
-
+  const profile	:Profile = useSelector((state: any) => state?.users.profile);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate()
   //   const [profile, setProfile] = useState<Profile>();
 
+  const token = accessToken();
   useEffect(() => {
-    const token = accessToken();
     if (token) {
       //   dispatch(getUser()).then((res: any) => {
       //     setProfile(res.payload);
       //   });
       dispatch(getUser());
     }
-  }, [dispatch]);
+  }, [dispatch, token]);
+
+  const handleLogOut = () => {
+	removeAccessToken()
+	removeRefreshToken()
+	dispatch(removeProfile())
+	navigate("/login")
+  }
+
   return (
     <>
       <div>
@@ -84,11 +93,55 @@ function Header() {
                 <span className="text-sm font-medium">Categories</span>
               </div>
 
-              <input
-                type="text"
-                className="w-full rounded-md border border-[#DDE2E4] px-3 py-2 text-sm"
-                value="DJI phantom"
-              />
+              {/* <div className="w-full mt-2 relative">
+                <div className="relative flex w-full flex-wrap items-stretch">
+                  <input
+                    type="search"
+                    className="relative m-0 block min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-light-blue-300 focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(173, 216, 230)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-light-blue-300"
+                    placeholder="Search"
+                    aria-label="Search"
+                    aria-describedby="button-addon2"
+                  />
+
+                  <span
+                    className="input-group-text flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center text-base font-normal text-neutral-700 dark:text-neutral-200"
+                    id="basic-addon2"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="h-5 w-5"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                </div>
+                <ul className="bg-white absolute w-95 pl-2 z-10 rounded py-2 mt-1 shadow-2xl">
+                  <li className="flex">
+                    <span className="">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="h-5 w-5"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                    <span className="pl-2">hi</span>
+                  </li>
+                </ul>
+              </div> */}
+			  <Search />
             </div>
 
             <div className="ml-2 flex">
@@ -143,7 +196,7 @@ function Header() {
                   <span className="text-sm font-medium pl-2">Cart</span>
                 </Link>
               </div>
-              {profile ? (
+              {Object.keys(profile).length !== 0 ? (
                 <Tooltip content={profile.email}>
                   <Menu>
                     <MenuHandler>
@@ -155,14 +208,16 @@ function Header() {
                     </MenuHandler>
                     <MenuList placeholder="">
                       <MenuItem placeholder="">
-                        <Typography
-                          // variant="text"
-                          color="red"
-                          className="mb-1 font-normal"
-                          placeholder=""
-                        >
-                          Profile
-                        </Typography>
+					  	<Link to="/user/profile">
+							<Typography
+							// variant="text"
+							color="red"
+							className="mb-1 font-normal"
+							placeholder=""
+							>
+								profile
+							</Typography>
+						</Link>
                       </MenuItem>
                       <hr />
                       <MenuItem placeholder="">
@@ -171,6 +226,7 @@ function Header() {
                           color="blue-gray"
                           className="mb-1 font-normal"
                           placeholder=""
+						  onClick={() => handleLogOut()}
                         >
                           Log Out
                         </Typography>
@@ -180,7 +236,11 @@ function Header() {
                 </Tooltip>
               ) : (
                 <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md border py-2 px-4 hover:bg-gray-100">
-                  <span className="text-sm font-medium">Sign in</span>
+                  <span className="text-sm font-medium">
+					<Link to="/login">
+						Sign in
+					</Link>
+				</span>
                 </div>
               )}
             </div>

@@ -15,9 +15,13 @@ function ProfileUser() {
           <NavUser />
           <div className="bg-white w-9/12 p-4">
             <div className="text-2xl text-blue-600 mb-2">PROFILE</div>
-			<Link to="/user/addprofile" className="bg-blue-500 text-white px-2 py-1 font-medium border border-blue-500 rounded-md dark:text-blue-300 dark:border-blue-300 ">
-				Add Profile
-			</Link>
+			{
+				Object.keys(profile).length === 0 ?
+					<Link to="/user/addprofile" className="bg-blue-500 text-white px-2 py-1 font-medium border border-blue-500 rounded-md dark:text-blue-300 dark:border-blue-300 ">
+						Add Profile
+					</Link>
+					: ""
+			}
             <hr className="mt-4" />
             <div className="p-4 grid  grid-cols-3">
               <div className="pt-4 col-span-2">

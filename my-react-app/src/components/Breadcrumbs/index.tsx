@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 
 function Breadcrumbs({value} : any) {
@@ -7,8 +8,8 @@ function Breadcrumbs({value} : any) {
         <div className="border-b border-stroke py-4 dark:border-dark-3 md:py-5 w-10/12">
           <ul className="flex items-center">
             <li className="flex items-center">
-              <a
-                href="/"
+              <Link
+			  	to="/"
                 className="flex items-center text-base font-medium text-body-color hover:text-primary dark:text-dark-6 dark:hover:text-primary"
               >
                 <span className="pr-2">
@@ -27,7 +28,7 @@ function Breadcrumbs({value} : any) {
                   </svg>
                 </span>
                 Home
-              </a>
+              </Link>
               <span className="px-3 text-body-color dark:text-dark-6"> / </span>
             </li>
             <li className="flex items-center">

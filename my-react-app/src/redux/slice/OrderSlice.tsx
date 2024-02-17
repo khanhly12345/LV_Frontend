@@ -52,12 +52,26 @@ export const getInvoice = createAsyncThunk(
 	}
 )
 
+export const getInvoiceById = createAsyncThunk(
+	"orders/getInvoiceById",
+	async (payload: any, { rejectWithValue }) => {
+		console.log(payload)
+		try {
+			const response = await axiosAdmin.post("order/getInvoiceById", { id: payload })
+			return response;
+		}catch(error: any) {
+			throw rejectWithValue(error.message)
+		}
+	}
+)
+
 const orderSlice = createSlice({
 	name: "order",
 	initialState: {
 		order: [],
 		status: '',
-		invoice: {}
+		invoice: {},
+		orderById: []
 	},
 	reducers: {
 
@@ -71,6 +85,9 @@ const orderSlice = createSlice({
 		})
 		builder.addCase(getInvoice.fulfilled, (state: any, action) => {
 			state.invoice = action.payload
+		})
+		builder.addCase(getInvoiceById.fulfilled, (state: any, action) => {
+			state.orderById = action.payload
 		})
 	}
 })
