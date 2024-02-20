@@ -4,11 +4,13 @@ import axiosAdmin from "../../api/axios"
 interface ProductsState {
 	data: any[]; // Replace 'any' with the actual type of your data
 	status: string;
+	detailProduct: object
   }
 
 const initialState: ProductsState = {
 	data: [],
 	status: "idle",
+	detailProduct: {}
 }
 
 export const addProduct = createAsyncThunk(
@@ -109,7 +111,7 @@ const productsSlice = createSlice({
 		})
 		.addCase(getProductById.fulfilled,  (state: any, action) => {
 			state.status = "successed"
-			state.data = action.payload
+			state.detailProduct = action.payload
 
 		})
 		.addCase(deleteProduct.pending,  (state: ProductsState) => {

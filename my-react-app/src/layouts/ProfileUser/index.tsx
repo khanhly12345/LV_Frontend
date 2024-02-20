@@ -6,7 +6,7 @@ import { Button } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 function ProfileUser() {
 	const profile = useSelector((state: any) => state?.users.profile)
-
+	console.log(profile)
   return (
     <>
       <Breadcrumbs value="Profile User" />
@@ -16,7 +16,7 @@ function ProfileUser() {
           <div className="bg-white w-9/12 p-4">
             <div className="text-2xl text-blue-600 mb-2">PROFILE</div>
 			{
-				Object.keys(profile).length === 0 ?
+				profile.fullname === null ?
 					<Link to="/user/addprofile" className="bg-blue-500 text-white px-2 py-1 font-medium border border-blue-500 rounded-md dark:text-blue-300 dark:border-blue-300 ">
 						Add Profile
 					</Link>

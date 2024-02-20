@@ -25,7 +25,7 @@ interface option {
 function Detail() {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const product = useSelector((state: any) => state?.products?.data);
+  const product = useSelector((state: any) => state?.products?.detailProduct);
   const productOptions = useSelector(
     (state: any) => state?.productOptions?.dataOptions
   );
@@ -66,12 +66,12 @@ function Detail() {
               <div className="w-full mb-8 md:w-1/2 md:mb-0">
                 <div className="sticky top-0 z-50 overflow-hidden ">
                   <div className="mb-6 lg:mb-10 lg:h-2/4 flex justify-center">
-                    {product && product.image && product.image[0] && (
+                    {product && product?.image && product?.image[0] && (
                       <img
                         src={`https://drive.google.com/thumbnail?id=${
                           filedId.thumnails
                             ? filedId.thumnails
-                            : product.image[0]
+                            : product?.image[0]
                         }&sz=w600-h400`}
                         alt="drive image"
                         // className="w-full h-80"

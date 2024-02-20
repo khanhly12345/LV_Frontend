@@ -53,7 +53,7 @@ function SignUp() {
               </div>
 
               <div className="md:w-8/12 lg:ml-6 lg:w-5/12">
-			  <span className="text-red-600"> {message ? message: 'hi'}</span>
+			  <span className="text-red-600"> {message ? message: ''}</span>
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="mb-6">
                     <label

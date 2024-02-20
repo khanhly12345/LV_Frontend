@@ -65,13 +65,39 @@ export const getInvoiceById = createAsyncThunk(
 	}
 )
 
+export const getChartUser = createAsyncThunk(
+	"orders/getChartUser",
+	async (_, { rejectWithValue }) => {
+		try {
+			const response = await axiosAdmin.get("order/getChartUser")
+			return response;
+		}catch(error: any) {
+			throw rejectWithValue(error.message)
+		}
+	}
+)
+
+export const getChartOrder = createAsyncThunk(
+	"orders/getChartOrder",
+	async (_, { rejectWithValue }) => {
+		try {
+			const response = await axiosAdmin.get("order/getChartOrder")
+			return response;
+		}catch(error: any) {
+			throw rejectWithValue(error.message)
+		}
+	}
+)
+
 const orderSlice = createSlice({
 	name: "order",
 	initialState: {
 		order: [],
 		status: '',
 		invoice: {},
-		orderById: []
+		orderById: [],
+		dataChartUser: [],
+		dataChartOrder: []
 	},
 	reducers: {
 
@@ -88,6 +114,12 @@ const orderSlice = createSlice({
 		})
 		builder.addCase(getInvoiceById.fulfilled, (state: any, action) => {
 			state.orderById = action.payload
+		})
+		builder.addCase(getChartOrder.fulfilled, (state: any, action) => {
+			state.dataChartOrder = action.payload
+		})
+		builder.addCase(getChartUser.fulfilled, (state: any, action) => {
+			state.dataChartUser = action.payload
 		})
 	}
 })

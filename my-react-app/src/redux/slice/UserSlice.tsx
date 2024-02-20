@@ -54,12 +54,25 @@ export const addUser = createAsyncThunk(
 	}
 );
 
+export const getAllUser = createAsyncThunk(
+	"user/getAllUser",
+	async ( _ , { rejectWithValue }) => {
+		try {
+			const response = await axiosAdmin.get('users/getAllUser')
+			return response;
+		} catch (error) {
+			return rejectWithValue(error)
+		}
+	}
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
     user: [],
 	status: '',
-	profile: {}
+	profile: {},
+	data: []
   },
   reducers: {
 	removeProfile: (state) => {
@@ -73,6 +86,9 @@ const userSlice = createSlice({
 	builder.addCase(getUser.fulfilled, (state: any, actions) => {
 		console.log(actions.payload)
 		state.profile = actions.payload
+	});
+	builder.addCase(getAllUser.fulfilled, (state: any, actions) => {
+		state.data = actions.payload
 	});
   },
 });

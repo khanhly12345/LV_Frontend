@@ -170,3 +170,11 @@ body {
 .w-95 {
 	width: 95%;
 }
+
+.imgChart {
+	background-image: url('assets/logo/abstract-financial-chart-uptrend-line-600nw-687485104.webp');
+
+	background-repeat: no-repeat;
+	background-size: cover;
+
+}

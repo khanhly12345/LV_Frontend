@@ -10,11 +10,12 @@ function Search() {
 	const navigate = useNavigate()
 
 	console.log(products);
-
-	const productName = products.map((product: any) => {
-		return product.productName
-	})
-	console.log(value)
+	let productName
+	if(products.length !== 0) {
+		productName = products?.map((product: any) => {
+			return product.productName
+		})
+	}
 
 	const handleSearch = () => {
 		navigate("/search/" + search)
@@ -56,12 +57,12 @@ function Search() {
         <ul className="bg-white absolute w-95 pl-2 z-10 rounded py-2 mt-1 shadow-2xl">
 			{
 				productName
-				.filter((product: any) => {
+				?.filter((product: any) => {
 					const searchTerm = search.toLowerCase()
 					const productName = product.toLowerCase()
 					return search && productName.startsWith(searchTerm) && productName !== searchTerm
 				})
-				.map((product: any) => (
+				?.map((product: any) => (
 					<li
 						className="flex"
 						onClick={() => setSearch(product)}
