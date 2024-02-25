@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosAdmin from "../../api/axios";
-import { getIdFromToken } from "../../utils/constant";
+import { BASE_URL, accessTokenAdmin, decodedTokenAdmin, getIdFromToken } from "../../utils/constant";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 export const signUp = createAsyncThunk(
 	"user/signup",
@@ -66,17 +68,77 @@ export const getAllUser = createAsyncThunk(
 	}
 );
 
+export const deleteUser = createAsyncThunk(
+	"user/delete",
+	async (payload: any, { rejectWithValue }) => {
+		console.log(payload)
+		try {
+			const response = await axiosAdmin.post("users/delete/" + payload)
+			return payload
+		}catch(error: any) {
+			throw rejectWithValue(error.message)
+		}
+	}
+)
+
+export const editUser = createAsyncThunk(
+	"user/edit",
+	async (payload: any, { rejectWithValue }) => {
+		console.log(payload)
+		try {
+			const response = await axiosAdmin.post("users/edit", payload)
+			return payload
+		}catch(error: any) {
+			throw rejectWithValue(error.message)
+		}
+	}
+)
+
+export const loginAdmin = createAsyncThunk(
+	"user/loginAdmin",
+	async (payload: any, { rejectWithValue }) => {
+		try {
+			const response = await axios.post(BASE_URL + 'auth/admin/login', payload)
+			return response;
+		} catch (error) {
+			console.log(error)
+			return rejectWithValue(error)
+		}
+	}
+);
+
+export const changePassword = createAsyncThunk(
+	"user/changePassword",
+	async (payload: any, { rejectWithValue }) => {
+		const id = getIdFromToken()
+		try {
+			const response = await axiosAdmin.post("auth/changePassword", {
+				id,
+				...payload
+			})
+			return response;
+		}catch(error: any) {
+			throw rejectWithValue(error.message)
+		}
+	}
+)
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
     user: [],
 	status: '',
 	profile: {},
-	data: []
+	data: [],
+	profileAdmin: {}
   },
   reducers: {
 	removeProfile: (state) => {
 		state.profile = {}
+	},
+	getProfileAdmin: (state) => {
+		const profile: any = decodedTokenAdmin()
+		state.profileAdmin = profile?.email
 	}
   },
   extraReducers(builder) {
@@ -89,9 +151,22 @@ const userSlice = createSlice({
 	});
 	builder.addCase(getAllUser.fulfilled, (state: any, actions) => {
 		state.data = actions.payload
-	});
+	})
+	.addCase(deleteUser.fulfilled,  (state: any, action) => {
+		state.data = state.data.filter((user: any) => user._id !== action.payload)
+	})
+	.addCase(editUser.fulfilled,  (state: any, actions) => {
+		state.profile = { ...state.profile, ...actions.payload}
+	})
+	.addCase(loginAdmin.fulfilled,  (state: any, actions) => {
+		let decoded: any;
+		if(actions.payload.data.access_token) {
+			decoded = jwtDecode(actions.payload.data.access_token)
+		}
+		state.profileAdmin = decoded?.email
+	})
   },
 });
 
-export const { removeProfile } = userSlice.actions;
+export const { removeProfile, getProfileAdmin } = userSlice.actions;
 export default userSlice.reducer;

@@ -1,4 +1,17 @@
+import { Avatar, Menu, MenuHandler, MenuItem, MenuList, Typography, Tooltip, } from "@material-tailwind/react";
+import { useEffect } from "react";
+// import { Tooltip } from "chart.js";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { useAppDispatch } from "../../redux/store";
+import { getProfileAdmin } from "../../redux/slice/UserSlice";
+
 function HeaderAdmin() {
+	const profile = useSelector((state: any) => state.users.profileAdmin)
+	const dispatch = useAppDispatch()
+	useEffect(() => {
+		dispatch(getProfileAdmin())
+	}, [])
   return (
     <>
       <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -40,6 +53,7 @@ function HeaderAdmin() {
             </div>
             <div className="flex items-center">
               <div className="flex items-center ms-3">
+			  {Object.keys(profile).length === 0 ?
                 <div>
                   <button
                     type="button"
@@ -55,63 +69,44 @@ function HeaderAdmin() {
                     />
                   </button>
                 </div>
-                <div
-                  className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
-                  id="dropdown-user"
-                >
-                  <div className="px-4 py-3" role="none">
-                    <p
-                      className="text-sm text-gray-900 dark:text-white"
-                      role="none"
-                    >
-                      Neil Sims
-                    </p>
-                    <p
-                      className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
-                      role="none"
-                    >
-                      neil.sims@flowbite.com
-                    </p>
-                  </div>
-                  <ul className="py-1" role="none">
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Dashboard
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Settings
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Earnings
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Sign out
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+			  :
+				<Tooltip  content={profile.email}>
+                  <Menu>
+                    <MenuHandler>
+                      <Avatar
+                        placeholder=""
+                        src={`https://drive.google.com/thumbnail?id=${profile.urlId}`}
+                        alt="avatar"
+                      />
+                    </MenuHandler>
+                    <MenuList placeholder="">
+                      <MenuItem placeholder="">
+					  	<Link to="/user/profile">
+							<Typography
+							// variant="text"
+							color="red"
+							className="mb-1 font-normal"
+							placeholder=""
+							>
+								profile
+							</Typography>
+						</Link>
+                      </MenuItem>
+                      <hr />
+                      <MenuItem placeholder="">
+                        <Typography
+                          // variant="text"
+                          color="blue-gray"
+                          className="mb-1 font-normal"
+                          placeholder=""
+                        >
+                          Log Out
+                        </Typography>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </Tooltip>
+			  }
               </div>
             </div>
           </div>

@@ -8,6 +8,11 @@ export const accessToken = () => {
 	return getAuth
 }
 
+export const accessTokenAdmin = () => {
+	const getAuth = localStorage.getItem('access_token_admin')
+	return getAuth
+}
+
 export const refreshToken = () => {
 	const getAuth = localStorage.getItem('refresh_token')
 	return getAuth
@@ -31,6 +36,15 @@ export const getCart = () => {
 export const decodedToken = () => {
 	const token: any = accessToken()
 	const decoded = jwtDecode(token)
+	return decoded;
+}
+
+export const decodedTokenAdmin = () => {
+	const token: any = accessTokenAdmin()
+	let decoded;
+	if(token) {
+		decoded = jwtDecode(token)
+	}
 	return decoded;
 }
 

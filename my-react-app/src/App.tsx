@@ -23,6 +23,8 @@ import Invoice from "./layoutAdmin/Invoice";
 import Search from "./layouts/Search";
 import PrivateRouters from "./utils/privateCheckOut";
 import PurchasingInformatin from "./layouts/PurchasingInformation";
+import Users from "./layoutAdmin/Users";
+import LoginAdmin from "./layoutAdmin/LoginAdmin";
 function App() {
   return (
     <>
@@ -52,7 +54,9 @@ function App() {
 			<Route path="edit-product/:id" element={<EditProduct />} />
 			<Route path="orders" element={<Orders />} />
 			<Route path="orders/:id" element={<Invoice />} />
+			<Route path="users" element={<Users />} />
 		</Route>
+		<Route path="/admin/login" element={<LoginAdmin />} />
       </Routes>
     </>
   );
