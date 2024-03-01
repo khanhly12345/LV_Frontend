@@ -25,6 +25,7 @@ import PrivateRouters from "./utils/privateCheckOut";
 import PurchasingInformatin from "./layouts/PurchasingInformation";
 import Users from "./layoutAdmin/Users";
 import LoginAdmin from "./layoutAdmin/LoginAdmin";
+import PlacedOder from "./layouts/PlacedOrder";
 function App() {
   return (
     <>
@@ -45,6 +46,7 @@ function App() {
 		  <Route path="/user/addprofile" element={<AddProfile />} />
 		  <Route path="/search/:value" element={<Search />} />
 		  <Route path="/user/purchase/:id" element={<PurchasingInformatin />} />
+		  <Route path="/user/placedorder" element={<PlacedOder />} />
         </Route>
 		<Route path="/admin" element={<LayoutAdmin />}>
 			<Route path="" element={<Overview />} />

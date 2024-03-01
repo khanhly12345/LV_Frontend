@@ -11,22 +11,31 @@ import {
   usePayPalScriptReducer,
 } from "@paypal/react-paypal-js";
 import { createOrder } from "../../redux/slice/OrderSlice";
+import Loading from "../../components/Loading";
 
 function Checkout() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const carts = useSelector((state: any) => state?.carts?.cartItems);
   const profile = useSelector((state: any) => state?.users.profile);
+	const status = useSelector((state: any) => state.orders.status)
 
   const quantities = getQuantities();
-  const total = getTotal();
+//   const total = getTotal();
   const userId = profile._id;
-
+	const total = carts.reduce((accumulator: any, currentValue: any, index: number) => {
+		return (currentValue?.productId?.price * quantities[index]) + accumulator
+	}, 0)
+	console.log(total)
   useEffect(() => {
     dispatch(getProductOptions());
   }, [dispatch]);
 
-  console.log(carts);
+  useEffect(() => {
+	if(status === 'success') {
+		navigate("/user/placedorder")
+	}
+  }, [status])
 
   const initialOptions = {
     clientId:
@@ -80,7 +89,7 @@ function Checkout() {
       <Breadcrumbs value="Check Out" />
       <div className="relative mx-auto w-10/12 bg-white mt-4 rounded-md">
         <div className="grid min-h-screen grid-cols-10">
-          <div className="col-span-full py-6 px-4 sm:py-12 lg:col-span-6 lg:py-24">
+          <div className="col-span-full py-2 px-4 lg:col-span-6">
             <div className="mx-auto w-full max-w-lg">
               <h1 className="relative text-2xl font-medium text-gray-700 sm:text-3xl">
                 Secure Checkout
@@ -206,6 +215,15 @@ function Checkout() {
                   </div>
                 </div>
               </div>
+			  {
+				status === "loading"
+				?
+					<div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+						<Loading />
+					</div>
+				:
+					""
+			  }
               <p className="mt-10 text-center text-sm font-semibold text-gray-500">
                 By placing this order you agree to the{" "}
                 <a
@@ -218,11 +236,15 @@ function Checkout() {
               <button
                 type="submit"
                 className="mt-4 inline-flex w-full items-center justify-center rounded bg-teal-600 py-2.5 px-4 text-base font-semibold tracking-wide text-white text-opacity-80 outline-none ring-offset-2 transition hover:text-opacity-100 focus:ring-2 focus:ring-teal-500 sm:text-lg"
-                onClick={() => handleSubit("1", "1", detailCart, userId)}
+                onClick={() => handleSubit("UNPAID", "CASH", detailCart, userId)}
               >
                 Place Order
               </button>
-              <div>OR</div>
+              <div className="my-2 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
+                  <p className="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">
+                    OR
+                  </p>
+                </div>
               <PayPalScriptProvider options={initialOptions}>
                 <PayPalButtons
                   style={{ layout: "horizontal" }}

@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { useAppDispatch } from "../../redux/store";
 import { useCallback, useEffect, useState } from "react";
-import { getProductOptions } from "../../redux/slice/CartSlice";
+import { deleteCart, getProductOptions } from "../../redux/slice/CartSlice";
 import { HandlePrice } from "../../utils/constant";
 import { useNavigate } from "react-router-dom";
 
@@ -41,6 +41,10 @@ function Cart() {
 		localStorage.setItem('quantity', JSON.stringify(quantities))
 		localStorage.setItem('total', newTotalPrice)
 		navigate('/checkout')
+	}
+
+	const handleDeleteCart = (id: string, index: number) => {
+		dispatch(deleteCart({ id, index }))
 	}
 
   return (
@@ -96,13 +100,16 @@ function Cart() {
 									</div>
 									</td>
 									<td className="py-4">{ HandlePrice(quantities[index] * cart.productId.price)}</td>
-									<td>X</td>
+									<td
+										onClick={() => handleDeleteCart(cart._id, index)}
+										className="cursor-pointer"
+									>X</td>
 									</tr>
 								</>
 							))
 						}
 
-                    <tr>
+                    {/* <tr>
                       <td className="py-4">
                         <div className="flex items-center">
                           <img
@@ -130,7 +137,7 @@ function Cart() {
                       </td>
                       <td className="py-4">$19.99</td>
 					  <td>X</td>
-                    </tr>
+                    </tr> */}
                   </tbody>
                 </table>
               </div>

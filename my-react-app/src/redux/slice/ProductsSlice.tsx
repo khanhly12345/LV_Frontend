@@ -77,6 +77,33 @@ export const getAllProduct = createAsyncThunk(
 	}
 )
 
+export const myFavoriteItem = createAsyncThunk(
+	"products/myFavoriteItem",
+	async ( payload: any ,{ rejectWithValue }) => {
+		console.log(payload)
+		try {
+			const response = await axiosAdmin.post("products/myFavoriteItem", payload)
+			return response
+		}catch(error: any) {
+			throw rejectWithValue(error.message)
+		}
+	}
+)
+
+export const getMyFavoriteItem = createAsyncThunk(
+	"products/getMyFavoriteItem",
+	async ( payload: any ,{ rejectWithValue }) => {
+		console.log(payload)
+		try {
+			const response = await axiosAdmin.post("products/getMyFavoriteItem", payload)
+			console.log("fv: ", response)
+			return response
+		}catch(error: any) {
+			throw rejectWithValue(error.message)
+		}
+	}
+)
+
 const productsSlice = createSlice({
 	name: 'products',
 	initialState,
@@ -121,6 +148,9 @@ const productsSlice = createSlice({
 			state.status = "successed"
 			state.data = state.data.filter((product: any) => product._id !== action.payload)
 			// state.status = "init"
+		})
+		builder.addCase(getMyFavoriteItem.fulfilled, (state: any, action: any) => {
+			state.favorite = action.payload.favorite
 		})
 	}
 })

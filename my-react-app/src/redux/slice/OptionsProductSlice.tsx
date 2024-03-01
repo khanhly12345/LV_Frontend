@@ -49,9 +49,12 @@ const productOptionsSlice = createSlice({
 		builder.addCase(addProductOptions.fulfilled, (state: any, action) => {
 			state.data = action.payload
 		})
+		builder.addCase(getProductOptionsById.pending, (state: any, action) => {
+			state.status = "loading"
+		})
 		builder.addCase(getProductOptionsById.fulfilled, (state: any, action) => {
-			console.log(action.payload)
 			state.dataOptions = action.payload
+			state.status = "success"
 		})
 	}
 })

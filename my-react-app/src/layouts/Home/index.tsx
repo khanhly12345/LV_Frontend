@@ -15,6 +15,9 @@ import { useEffect } from "react";
 import { getAllProduct } from "../../redux/slice/ProductsSlice";
 import { useSelector } from "react-redux";
 
+import AOS from "aos"
+import 'aos/dist/aos.css';
+
 const responsive = {
   superLargeDesktop: {
     // the naming can be any, depends on you.
@@ -44,17 +47,23 @@ function Home() {
 	window.scroll(0, 0)
   }, []);
 
+  useEffect(() => {
+    AOS.init({ duration: 2000 });
+  }, []);
+
   return (
     <>
       <MultiCarousel
         className="rounded-xl h-200 mt-4 w-125 ml-2"
         placeholder=""
+		autoplay={true}
+		loop={true}
       >
         <img src={slider2} alt="" className="h-full w-full object-cover" />
         <img src={slider1} alt="" className="h-full w-full object-cover" />
         <img src={slider3} alt="" className="h-full w-full object-cover" />
       </MultiCarousel>
-      <div className="h-500px my-custom-bg-class m-4">
+      <div className="h-500px my-custom-bg-class m-4"  data-aos="fade-up">
         <img src={banner} alt="" className="w-full h-24" />
         <Carousel responsive={responsive} className="ml-4" autoPlay={true}>
           {products
@@ -79,7 +88,7 @@ function Home() {
           <Product />
         </Carousel>
       </div>
-      <div className="weekOfGold">
+      <div className="weekOfGold"  data-aos="fade-up">
         <p className="prd-promo__title">TUẦN LỄ - GIẢM TỚI 1 TRIỆU</p>
         <Carousel responsive={responsive} className="ml-4 mr-4" autoPlay={true}>
           <img src={weekSlider1} alt="" className="p-2 " />
@@ -121,7 +130,7 @@ function Home() {
           <span className="mb-3 relative bottom-1">Xem tất cả sản phẩm</span>
         </a>
       </div>
-      <div className="bg-white m-4 rounded">
+      <div className="bg-white m-4 rounded" data-aos="fade-up">
         <div className="flex justify-center">
           <h1 className="text-4xl text-red-600 font-semibold ml-4 tracking-widest underlin pt-4">
             SẢN PHẨM LAPTOP MỚI

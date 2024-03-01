@@ -1,6 +1,11 @@
 import { useSelector } from "react-redux";
 import logoTop from "../../assets/logo/logotop.webp";
-import { accessToken, getCart, removeAccessToken, removeRefreshToken } from "../../utils/constant";
+import {
+  accessToken,
+  getCart,
+  removeAccessToken,
+  removeRefreshToken,
+} from "../../utils/constant";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../redux/store";
 import { getAllCartId, addCartId } from "../../redux/slice/CartSlice";
@@ -24,9 +29,9 @@ interface Profile {
 
 function Header() {
   const cart = useSelector((state: any) => state?.carts?.cartId);
-  const profile	:Profile = useSelector((state: any) => state?.users.profile);
+  const profile: Profile = useSelector((state: any) => state?.users.profile);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   //   const [profile, setProfile] = useState<Profile>();
 
   const token = accessToken();
@@ -40,11 +45,11 @@ function Header() {
   }, [dispatch, token]);
 
   const handleLogOut = () => {
-	removeAccessToken()
-	removeRefreshToken()
-	dispatch(removeProfile())
-	navigate("/login")
-  }
+    removeAccessToken();
+    removeRefreshToken();
+    dispatch(removeProfile());
+    navigate("/login");
+  };
 
   return (
     <>
@@ -75,22 +80,20 @@ function Header() {
             </div>
 
             <div className="ml-6 flex flex-1 gap-x-3">
-              <div className="flex cursor-pointer select-none items-center gap-x-2 rounded-md border bg-[#4094F7] py-2 px-4 text-white hover:bg-blue-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-                <span className="text-sm font-medium">Categories</span>
+              <div className="flex cursor-pointer select-none items-center gap-x-2 rounded-md border bg-[#4094F7] py-2 px-4 text-white hover:bg-blue-500 w-44">
+                <Link to="/filter-product" className="flex">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    className="h-5 w-5 text-white"
+                    fill="currentColor"
+                  >
+                    <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
+                  </svg>
+                  <span className="text-sm font-medium ml-1">
+                    Product Filter
+                  </span>
+                </Link>
               </div>
 
               {/* <div className="w-full mt-2 relative">
@@ -141,7 +144,7 @@ function Header() {
                   </li>
                 </ul>
               </div> */}
-			  <Search />
+              <Search />
             </div>
 
             <div className="ml-2 flex">
@@ -196,7 +199,8 @@ function Header() {
                   <span className="text-sm font-medium pl-2">Cart</span>
                 </Link>
               </div>
-              {Object.keys(profile).length !== 0 ? (
+              {/* {Object.keys(profile).length !== 0 ? ( */}
+			  {	token ?
                 <Tooltip content={profile.email}>
                   <Menu>
                     <MenuHandler>
@@ -208,16 +212,16 @@ function Header() {
                     </MenuHandler>
                     <MenuList placeholder="">
                       <MenuItem placeholder="">
-					  	<Link to="/user/profile">
-							<Typography
-							// variant="text"
-							color="red"
-							className="mb-1 font-normal"
-							placeholder=""
-							>
-								profile
-							</Typography>
-						</Link>
+                        <Link to="/user/profile">
+                          <Typography
+                            // variant="text"
+                            color="red"
+                            className="mb-1 font-normal"
+                            placeholder=""
+                          >
+                            profile
+                          </Typography>
+                        </Link>
                       </MenuItem>
                       <hr />
                       <MenuItem placeholder="">
@@ -226,7 +230,7 @@ function Header() {
                           color="blue-gray"
                           className="mb-1 font-normal"
                           placeholder=""
-						  onClick={() => handleLogOut()}
+                          onClick={() => handleLogOut()}
                         >
                           Log Out
                         </Typography>
@@ -234,13 +238,11 @@ function Header() {
                     </MenuList>
                   </Menu>
                 </Tooltip>
-              ) : (
+               : (
                 <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md border py-2 px-4 hover:bg-gray-100">
                   <span className="text-sm font-medium">
-					<Link to="/login">
-						Sign in
-					</Link>
-				</span>
+                    <Link to="/login">Sign in</Link>
+                  </span>
                 </div>
               )}
             </div>

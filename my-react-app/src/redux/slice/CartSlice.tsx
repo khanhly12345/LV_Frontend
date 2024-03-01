@@ -1,7 +1,8 @@
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getCart } from "../../utils/constant";
+import { getCart, getQuantities } from "../../utils/constant";
 import axiosAdmin from "../../api/axios";
+import Cart from "../../layouts/Cart";
 
 // export const getCart = () => {
 // 	const cartString = localStorage.getItem('cart');
@@ -32,7 +33,6 @@ const cartSlice = createSlice({
 	reducers: {
 		getAllCartId: (state) => {
 			state.cartId = getCart()
-			console.log(state.cartId)
 		},
 		addCartId: (state, actions) => {
 			const cartId  = state.cartId
@@ -40,6 +40,17 @@ const cartSlice = createSlice({
 				localStorage.setItem("cart", JSON.stringify([...cartId, actions.payload]));
 				state.cartId.push(actions.payload)
 			}
+		},
+		deleteCart: (state, actions) => {
+			const cartId = getCart()
+			const quantity = getQuantities()
+			console.log("quantity: ", quantity)
+			quantity.splice(actions.payload.index, 1)
+			console.log("new quantity: ", quantity)
+			const filterCart = cartId.filter((cart:any) => cart != actions.payload.id)
+			localStorage.setItem("cart", JSON.stringify(filterCart));
+			localStorage.setItem("quantity", JSON.stringify(quantity));
+			state.cartItems = state.cartItems.filter((cart: any) => cart._id != actions.payload.id)
 		}
 	},
 	extraReducers(builder) {
@@ -49,5 +60,5 @@ const cartSlice = createSlice({
 	}
 })
 
-export const { getAllCartId, addCartId } = cartSlice.actions;
+export const { getAllCartId, addCartId, deleteCart } = cartSlice.actions;
 export default cartSlice.reducer;

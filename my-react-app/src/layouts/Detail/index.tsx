@@ -1,11 +1,11 @@
-import { Rating } from "@material-tailwind/react";
+import { Rating, Tooltip } from "@material-tailwind/react";
 import avatar from "../../assets/product/iphone-14-pro-max-256gb-(52).webp";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../redux/store";
-import { getProductById } from "../../redux/slice/ProductsSlice";
+import { getMyFavoriteItem, getProductById, myFavoriteItem } from "../../redux/slice/ProductsSlice";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { HandlePrice, getCart } from "../../utils/constant";
+import { HandlePrice, getCart, getIdFromToken } from "../../utils/constant";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { getProductOptionsById } from "../../redux/slice/OptionsProductSlice";
 import { ToastContainer, toast } from "react-toastify";
@@ -29,32 +29,58 @@ function Detail() {
   const productOptions = useSelector(
     (state: any) => state?.productOptions?.dataOptions
   );
+  const status = useSelector((state: any) => state?.productOptions?.status);
+  const favoriteItem = useSelector((state: any) => state?.products?.favorite);
+
+  console.log(favoriteItem)
 
   const [filedId, setFiledId] = useState({ thumnails: "", index: -1 });
   const [colorId, setColorId] = useState({ id: "", index: -1 });
   const [ramId, setRamId] = useState({ id: "", index: -1 });
   const [idOption, setIdOption] = useState("");
+  const [favorite, setFavorite] = useState(false);
   const cartId = getCart();
 
   useEffect(() => {
     window.scroll(0, 0);
     dispatch(getProductById(id));
     dispatch(getProductOptionsById(id));
+	const userId = getIdFromToken()
+	const payload = {
+		productId: id,
+		userId,
+	}
+	dispatch(getMyFavoriteItem(payload))
   }, []);
+
+  useEffect(() => {
+	setFavorite(favoriteItem)
+  }, [favoriteItem])
 
   const handleAddCart = () => {
     if (idOption && !cartId.includes(idOption)) {
-    //   localStorage.setItem("cart", JSON.stringify([...cartId, idOption]));
-		dispatch(addCartId(idOption))
+      //   localStorage.setItem("cart", JSON.stringify([...cartId, idOption]));
+      dispatch(addCartId(idOption));
       toast.success("Success Notification !", {
         autoClose: 1000,
       });
-    }else {
-		toast.warning("Chose option or the option have existed in cart", {
-			autoClose: 1000,
-		});
-	}
+    } else {
+      toast.warning("Chose option or the option have existed in cart", {
+        autoClose: 1000,
+      });
+    }
   };
+
+  const handleFavorite = () => {
+	setFavorite(!favoriteItem)
+	const userId = getIdFromToken()
+	const payload = {
+		productId: id,
+		userId,
+		favorite: !favoriteItem
+	}
+	dispatch(myFavoriteItem(payload))
+  }
 
   return (
     <>
@@ -66,68 +92,162 @@ function Detail() {
               <div className="w-full mb-8 md:w-1/2 md:mb-0">
                 <div className="sticky top-0 z-50 overflow-hidden ">
                   <div className="mb-6 lg:mb-10 lg:h-2/4 flex justify-center">
-                    {product && product?.image && product?.image[0] && (
-                      <img
-                        src={`https://drive.google.com/thumbnail?id=${
-                          filedId.thumnails
-                            ? filedId.thumnails
-                            : product?.image[0]
-                        }&sz=w600-h400`}
-                        alt="drive image"
-                        // className="w-full h-80"
-                      />
+                    {status === "loading" ? (
+                      <div
+                        role="status"
+                        className="space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center"
+                      >
+                        <div className="flex items-center justify-center w-full h-96 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
+                          <svg
+                            className="w-10 h-10 text-gray-200 dark:text-gray-600"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 20 18"
+                          >
+                            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                          </svg>
+                        </div>
+
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    ) : (
+                      product &&
+                      product?.image &&
+                      product?.image[0] && (
+                        <img
+                          src={`https://drive.google.com/thumbnail?id=${
+                            filedId.thumnails
+                              ? filedId.thumnails
+                              : product?.image[0]
+                          }&sz=w600-h400`}
+                          alt="drive image"
+                          // className="w-full h-80"
+                        />
+                      )
                     )}
                   </div>
                   <div className="flex-wrap hidden md:flex ">
-                    {product?.image
-                      ?.slice(-4)
-                      .map((thumnails: string, index: number) => (
-                        <div
-                          className="w-1/2 p-2 sm:w-1/4"
-                          onClick={() => setFiledId({ thumnails, index })}
-                        >
-                          <a
-                            className={`block ${
-                              filedId.index === index
-                                ? "border border-purple-600"
-                                : ""
-                            } b hover:border-fuchsia-300`}
+                    {status === "loading" ? (
+                      <div
+                        role="status"
+                        className="flex space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center"
+                      >
+                        <div className="flex items-center justify-center w-24 h-20 bg-gray-300 rounded  dark:bg-gray-700">
+                          <svg
+                            className="w-10 h-10 text-gray-200 dark:text-gray-600"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 20 18"
                           >
-                            <img
-                              src={`https://drive.google.com/thumbnail?id=${thumnails}&sz=w100-h100`}
-                              alt=""
-                              className="object-cover w-full lg:h-20"
-                            />
-                          </a>
+                            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                          </svg>
                         </div>
-                      ))}
+                        <div className="flex items-center justify-center w-24 h-20 bg-gray-300 rounded  dark:bg-gray-700">
+                          <svg
+                            className="w-10 h-10 text-gray-200 dark:text-gray-600"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 20 18"
+                          >
+                            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                          </svg>
+                        </div>
+                        <div className="flex items-center justify-center w-24 h-20 bg-gray-300 rounded  dark:bg-gray-700">
+                          <svg
+                            className="w-10 h-10 text-gray-200 dark:text-gray-600"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 20 18"
+                          >
+                            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                          </svg>
+                        </div>
+                        <div className="flex items-center justify-center w-24 h-20 bg-gray-300 rounded  dark:bg-gray-700">
+                          <svg
+                            className="w-10 h-10 text-gray-200 dark:text-gray-600"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 20 18"
+                          >
+                            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                          </svg>
+                        </div>
+                      </div>
+                    ) : (
+                      product?.image
+                        ?.slice(-4)
+                        .map((thumnails: string, index: number) => (
+                          <div
+                            className="w-1/2 p-2 sm:w-1/4"
+                            onClick={() => setFiledId({ thumnails, index })}
+                          >
+                            <a
+                              className={`block ${
+                                filedId.index === index
+                                  ? "border border-purple-600"
+                                  : ""
+                              } b hover:border-fuchsia-300`}
+                            >
+                              <img
+                                src={`https://drive.google.com/thumbnail?id=${thumnails}&sz=w100-h100`}
+                                alt=""
+                                className="object-cover w-full lg:h-20"
+                              />
+                            </a>
+                          </div>
+                        ))
+                    )}
                   </div>
                   <div className="px-6 pb-6 mt-6 border-t border-gray-300 dark:border-gray-400 ">
-                    <div className="flex flex-wrap items-center mt-6">
-                      <span className="mr-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="w-4 h-4 text-gray-700 dark:text-gray-400 bi bi-truck"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path>
-                        </svg>
-                      </span>
-                      <h2 className="text-lg font-bold text-gray-700 dark:text-gray-400">
-                        Free Shipping
-                      </h2>
-                    </div>
-                    <div className="mt-2 px-7">
-                      <a
-                        className="text-sm text-fuchsia-400 dark:text-fuchsia-200"
-                        href="google.com"
+                    {status === "loading" ? (
+                      <div
+                        role="status"
+                        className="space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center"
                       >
-                        Get delivery dates
-                      </a>
-                    </div>
+                        <div className="w-full">
+                          <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[440px] mb-2.5"></div>
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[460px] mb-2.5"></div>
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                        </div>
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-wrap items-center mt-6">
+                          <span className="mr-2">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              className="w-4 h-4 text-gray-700 dark:text-gray-400 bi bi-truck"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path>
+                            </svg>
+                          </span>
+                          <h2 className="text-lg font-bold text-gray-700 dark:text-gray-400">
+                            Free Shipping
+                          </h2>
+                        </div>
+                        <div className="mt-2 px-7">
+                          <a
+                            className="text-sm text-fuchsia-400 dark:text-fuchsia-200"
+                            href="google.com"
+                          >
+                            Get delivery dates
+                          </a>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -135,18 +255,51 @@ function Detail() {
                 <div className="lg:pl-20">
                   <div className="mb-8 ">
                     <h2 className="max-w-xl mb-6 text-2xl font-bold dark:text-gray-400 md:text-4xl">
-                      {product?.productName}
+                      {status === "loading" ? (
+                        <div role="status" className="max-w-sm animate-pulse">
+                          <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      ) : (
+                        product?.productName
+                      )}
+                      {/* {product?.productName} */}
                     </h2>
-                    <p className="inline-block mb-6 text-4xl font-bold text-gray-700 dark:text-gray-400 ">
+                    {status === "loading" ? (
+                      <div role="status" className="max-w-sm animate-pulse">
+                        <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    ) : (
+                      <p className="inline-block mb-6 text-4xl font-bold text-gray-700 dark:text-gray-400 ">
+                        <span>{HandlePrice(product?.price)}</span>
+                        <span className="text-base font-normal ml-2 text-gray-500 line-through dark:text-gray-400">
+                          {HandlePrice(
+                            product?.price + (product?.price * 12) / 100
+                          )}
+                        </span>
+                      </p>
+                    )}
+                    {/* <p className="inline-block mb-6 text-4xl font-bold text-gray-700 dark:text-gray-400 ">
                       <span>{HandlePrice(product?.price)}</span>
                       <span className="text-base font-normal text-gray-500 line-through dark:text-gray-400">
                         {HandlePrice(
                           product?.price + (product?.price * 12) / 100
                         )}
                       </span>
-                    </p>
+                    </p> */}
                     <p className="max-w-md text-gray-700 dark:text-gray-400">
-                      {product?.description}
+                      {status === "loading" ? (
+                        <div role="status" className="max-w-sm animate-pulse">
+                          <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      ) : (
+                        product?.description
+                      )}
                     </p>
                   </div>
                   <div className="mb-8">
@@ -154,7 +307,34 @@ function Detail() {
                       Colors
                     </h2>
                     <div className="flex flex-wrap -mx-2 -mb-2">
-                      {productOptions?.map(
+                      {status === "loading" ? (
+                        <div role="status" className="max-w-sm animate-pulse">
+                          <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      ) : (
+                        productOptions?.map(
+                          (productOption: option, index: number) => (
+                            <button
+                              className={`px-4 py-2 mb-2 mr-4 font-semibold border ${
+                                productOption._id === ramId.id ||
+                                index === colorId.index
+                                  ? "border-purple-600"
+                                  : ""
+                              } rounded-md hover:border-fuchsia-400 hover:text-fuchsia-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400`}
+                              onClick={() => {
+                                setColorId({ id: productOption._id, index });
+                                setRamId({ id: "", index: -1 });
+                                setIdOption(productOption._id);
+                              }}
+                            >
+                              {productOption?.color}
+                            </button>
+                          )
+                        )
+                      )}
+                      {/* {productOptions?.map(
                         (productOption: option, index: number) => (
                           <button
                             className={`px-4 py-2 mb-2 mr-4 font-semibold border ${
@@ -172,7 +352,7 @@ function Detail() {
                             {productOption?.color}
                           </button>
                         )
-                      )}
+                      )} */}
                     </div>
                   </div>
                   <div className="mb-8 ">
@@ -181,7 +361,34 @@ function Detail() {
                     </h2>
                     <div>
                       <div className="flex flex-wrap -mb-2">
-                        {productOptions?.map(
+                        {status === "loading" ? (
+                          <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        ) : (
+                          productOptions?.map(
+                            (productOption: option, index: number) => (
+                              <button
+                                className={`px-4 py-2 mb-2 mr-4 font-semibold border ${
+                                  index === ramId.index ||
+                                  productOption._id === colorId.id
+                                    ? "border-purple-600"
+                                    : ""
+                                } rounded-md hover:border-fuchsia-400 hover:text-fuchsia-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400`}
+                                onClick={() => {
+                                  setRamId({ id: productOption._id, index });
+                                  setColorId({ id: "", index: -1 });
+                                  setIdOption(productOption._id);
+                                }}
+                              >
+                                {productOption?.ram}
+                              </button>
+                            )
+                          )
+                        )}
+                        {/* {productOptions?.map(
                           (productOption: option, index: number) => (
                             <button
                               className={`px-4 py-2 mb-2 mr-4 font-semibold border ${
@@ -199,20 +406,27 @@ function Detail() {
                               {productOption?.ram}
                             </button>
                           )
-                        )}
-                        {/* <button className="px-4 py-2 mb-2 mr-4 font-semibold border border-purple-600 rounded-md hover:border-fuchsia-400 dark:border-gray-400 hover:text-fuchsia-600 dark:hover:border-gray-300 dark:text-gray-400">
-                          8 GB
-                        </button> */}
+                        )} */}
                       </div>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-4">
                     <button
-                      className="w-full p-4 bg-purple-500 rounded-md lg:w-5/5  text-gray-50 hover:bg-purple-600 "
+                      className="w-10/12 p-4 bg-purple-500 rounded-md lg:w-5/5  text-gray-50 hover:bg-purple-600 "
                       onClick={() => handleAddCart()}
                     >
                       Add to cart
                     </button>
+					<div onClick={() => handleFavorite()}>
+					<Tooltip content="My favoirte item">
+						<svg xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 512 512"
+							className={`h-10 w-10 ${!favorite ? '' : 'text-red-500'}`}
+							fill="currentColor"
+						>
+							<path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>
+					</Tooltip>
+					</div>
                   </div>
                 </div>
               </div>
@@ -738,7 +952,7 @@ function Detail() {
         </section>
         <ToastContainer />
       </div> */}
-	  <RateProduct />
+      <RateProduct />
     </>
   );
 }

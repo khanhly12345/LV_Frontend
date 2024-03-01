@@ -4,10 +4,10 @@ import Invoice from "../../layoutAdmin/Invoice";
 
 export const createOrder = createAsyncThunk(
 	"createOrder",
-	( payload: any , { rejectWithValue }) => {
+	async ( payload: any , { rejectWithValue }) => {
 		console.log(payload)
 		try {
-			const order = axiosAdmin.post("order/create", payload)
+			const order = await axiosAdmin.post("order/create", payload)
 			return order;
 		} catch (error) {
 			return rejectWithValue(error)
@@ -103,6 +103,12 @@ const orderSlice = createSlice({
 
 	},
 	extraReducers(builder) {
+		builder.addCase(createOrder.pending, (state: any, action) => {
+			state.status = 'loading'
+		})
+		builder.addCase(createOrder.fulfilled, (state: any, action) => {
+			state.status = 'success'
+		})
 		builder.addCase(getOrder.fulfilled, (state: any, action) => {
 			state.order = action.payload
 		})
